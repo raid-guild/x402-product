@@ -24,9 +24,9 @@ Use **[TEMPLATE](./TEMPLATE.md)** as the starting point for new research artifac
 
    > *TODO: Add a short description of the artifact (and update title if necessary)*
 
-3. **[ARTIFACT_03](./ARTIFACT_03.md)** - Cost Structure & Rate Limiting Strategy
+3. **[ARTIFACT_03](./ARTIFACT_03.md)** - Cost Structure & Rate Limiting Analysis
 
-   > *TODO: Add a short description of the artifact (and update title if necessary)*
+   A research-backed analysis of x402 facilitator operating costs (gas/RPC/relayers), rate limiting and abuse prevention, transaction failure risks, and OFAC screening.
 
 4. **[ARTIFACT_04](./ARTIFACT_04.md)** - Multi-Network Deployment Analysis
 
