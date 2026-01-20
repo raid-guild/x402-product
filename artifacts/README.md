@@ -36,9 +36,9 @@ Use **[TEMPLATE](./TEMPLATE.md)** as the starting point for new research artifac
 
    > *TODO: Add a short description of the artifact (and update title if necessary)*
 
-6. **[ARTIFACT_06](./ARTIFACT_06.md)** - Infrastructure Cost Analysis
+6. **[ARTIFACT_06](./ARTIFACT_06.md)** - Facilitator Deployment Strategy
 
-   > *TODO: Add a short description of the artifact (and update title if necessary)*
+   Investigates whether deploying separate facilitator instances per network (e.g., Arbitrum, Optimism) is necessary and sustainable.
 
 7. **[ARTIFACT_07](./ARTIFACT_07.md)** - Privacy-Preserving Facilitator
 

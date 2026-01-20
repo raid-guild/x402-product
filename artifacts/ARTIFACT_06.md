@@ -1,6 +1,4 @@
-# Infrastructure Cost Analysis
-
-> *TODO: Evaluate the use of Raid Guild's Vercel account for hosting the facilitator dashboard and related documentation.*
+# Facilitator Deployment Strategy
 
 - **Author(s)**: name (@username)
 - **Editor(s)**: name (@username)
@@ -10,7 +8,7 @@
 
 ## Short Description
 
-...
+Investigates whether deploying separate facilitator instances per network (e.g., Arbitrum, Optimism) is necessary and sustainable.
 
 ## Table of Contents
 
