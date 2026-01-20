@@ -40,6 +40,6 @@ Use **[TEMPLATE](./TEMPLATE.md)** as the starting point for new research artifac
 
    > *TODO: Add a short description of the artifact (and update title if necessary)*
 
-7. **[ARTIFACT_07](./ARTIFACT_07.md)** - Privacy-Preserving Facilitator
+7. **[ARTIFACT_07](./ARTIFACT_07.md)** - Privacy-Preserving x402 Facilitator
 
-   > *TODO: Add a short description of the artifact (and update title if necessary)*
+   Assess the technical requirements and viability of implementing a privacy-preserving x402 facilitator using Aztec + Noir for shielded payments and compare alternative approaches.
