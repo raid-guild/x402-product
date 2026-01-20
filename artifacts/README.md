@@ -28,11 +28,11 @@ Use **[TEMPLATE](./TEMPLATE.md)** as the starting point for new research artifac
 
    > *TODO: Add a short description of the artifact (and update title if necessary)*
 
-4. **[ARTIFACT_04](./ARTIFACT_04.md)** - Multi-Network Deployment Analysis
+4. **[ARTIFACT_04](./ARTIFACT_04.md)** - White-Label Product Feasibility
 
-   > *TODO: Add a short description of the artifact (and update title if necessary)*
+   Explores the case on the feasibility of building a white-label facilitator that can be packaged and maintained for select EVM L2/L3 chains.
 
-5. **[ARTIFACT_05](./ARTIFACT_05.md)** - White-Label Product Feasibility
+5. **[ARTIFACT_05](./ARTIFACT_05.md)** - Multi-Network Deployment Analysis
 
    > *TODO: Add a short description of the artifact (and update title if necessary)*
 
