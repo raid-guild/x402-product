@@ -1,9 +1,9 @@
 # White-Label Product Feasibility
 
 - **Author(s)**: Patrick (@sinachpat)
-- **Editor(s)**: name (@username)
+- **Editor(s)**: NA
 - **Date (created)**: 2026-01-14
-- **Date (updated)**: YYYY-MM-DD
+- **Date (updated)**: NA
 - **Sprint**: Cohort 11
 
 ## Short Description
