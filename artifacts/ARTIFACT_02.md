@@ -1,9 +1,9 @@
 # x402 Facilitator Competitor Analysis
 
 - **Author(s)**: Rome (@PowerfulRI)
-- **Editor(s)**: Ryan (@ryanchristo)
+- **Editor(s)**: NA
 - **Date (created)**: 2026-01-14
-- **Date (updated)**: 2026-01-19
+- **Date (updated)**: NA
 - **Sprint**: Cohort 11
 
 ## Short Description
@@ -19,7 +19,7 @@ A data-driven competitor analysis of the x402 facilitator market and Turnstile P
 - [Part 4: Threat Assessment](#part-4-threat-assessment)
 - [Part 5: Turnstile Pay Analysis](#part-5-turnstile-pay-analysis)
 - [Part 6: Strategic Recommendations](#part-6-strategic-recommendations)
-- [References](#references)
+- [Data Sources](#data-sources)
 
 ## Executive Summary
 
@@ -993,7 +993,7 @@ Unlike free facilitators controlled by others, Turnstile Pay gives you productio
 - Spread thin across many chains
 - Ignore Dexter's Base expansion
 
-## References
+## Data Sources
 
 | Source | URL |
 |--------|-----|
