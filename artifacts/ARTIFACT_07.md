@@ -8,7 +8,7 @@
 
 ## Short Description
 
-Assess the technical requirements and viability of implementing a privacy-preserving x402 facilitator using Aztec + Noir for shielded payments and compare alternative approaches.
+Assess the technical requirements and viability of developing a privacy-preserving x402 facilitator, comparing EVM-native privacy improvements with more advanced integrations with privacy layers for shielded payments.
 
 ## Table of Contents
 
@@ -22,44 +22,50 @@ Assess the technical requirements and viability of implementing a privacy-preser
   - [Current x402 Facilitator](#current-x402-facilitator)
   - [Planned x402 v2 Features](#planned-x402-v2-features)
   - [Architecture Considerations](#architecture-considerations)
-- [Option A: Aztec + Noir](#option-a-aztec--noir)
+- [Option A: EVM Improvements](#option-a-evm-improvements)
   - [High-Level Architecture](#option-a-high-level-architecture)
   - [EVM Exact Flow and What Changes](#option-a-evm-exact-flow-and-what-changes)
-  - [Core technical requirements](#option-a-core-technical-requirements)
-  - [Candidate approaches](#option-a-candidate-approaches)
-  - [Feasibility notes / open questions](#option-a-feasibility)
-- [Option B: EVM Alternatives](#option-b-evm-alternatives)
+  - [Core Technical Requirements](#option-a-core-technical-requirements)
+  - [Candidate Approaches](#option-a-candidate-approaches)
+  - [Feasibility / Open Questions](#option-a-feasibility)
+- [Option B: Aztec + Noir](#option-b-aztec--noir)
   - [High-Level Architecture](#option-b-high-level-architecture)
   - [EVM Exact Flow and What Changes](#option-b-evm-exact-flow-and-what-changes)
-  - [Core technical requirements](#option-b-core-technical-requirements)
-  - [Candidate approaches](#option-b-candidate-approaches)
-  - [Feasibility notes / open questions](#option-b-feasibility)
+  - [Core Technical Requirements](#option-b-core-technical-requirements)
+  - [Candidate Approaches](#option-b-candidate-approaches)
+  - [Feasibility / Open Questions](#option-b-feasibility)
 - [Facilitator Architecture Strategy](#facilitator-architecture-strategy)
-  - [Strategy 1: Extend the existing Go facilitator](#strategy-1-extend-the-existing-go-facilitator)
-  - [Strategy 2: Build a new privacy-preserving facilitator](#strategy-2-build-a-new-privacy-preserving-facilitator)
+  - [Strategy 1: Extend Existing Go Facilitator](#strategy-1-extend-existing-go-facilitator)
+  - [Strategy 2: Build New Privacy-Preserving Facilitator](#strategy-2-build-new-privacy-preserving-facilitator)
 - [Additional Requirements](#additional-requirements)
-  - [Baseline requirements](#baseline-requirements)
-  - [Operation requirements](#operation-requirements)
-  - [Dashboard requirements](#dashboard-requirements)
-  - [Integration requirements](#integration-requirements)
+  - [Baseline Requirements](#baseline-requirements)
+  - [Operation Requirements](#operation-requirements)
+  - [Dashboard Requirements](#dashboard-requirements)
+  - [Integration Requirements](#integration-requirements)
 - [Recommendations](#recommendations)
-  - [Phase 0: Define privacy target + key architecture decisions (must-do)](#phase-0-define-privacy-target--key-architecture-decisions-must-do)
-  - [Phase 1: Deliver “medium privacy” on EVM (fast path)](#phase-1-deliver-medium-privacy-on-evm-fast-path)
-  - [Phase 2: Prototype Aztec/Noir receipt-based gating (research-to-prod bridge)](#phase-2-prototype-aztecnoir-receipt-based-gating-research-to-prod-bridge)
+  - [Phase 0: Define Privacy Target + Key Architecture Decisions](#phase-0-define-privacy-target--key-architecture-decisions)
+  - [Phase 1: Deliver "Weak-to-Medium Privacy” Facilitator for EVM Chains](#phase-1-deliver-weak-to-medium-privacy-facilitator-for-evm-chains)
+  - [Phase 2: Prototype "Strong Privacy" Facilitator with Aztec/Noir](#phase-2-prototype-strong-privacy-facilitator-with-aztecnoir)
 - [References](#references)
 
 ## Executive Summary
 
-Building a privacy-preserving x402 facilitator requires redefining "settlement":
+Building a privacy-preserving x402 facilitator often means changing the **path to settlement**, and in stronger privacy designs it can also mean redefining “settlement”:
 
-- On public EVM chains, settlement is **permissionless**, **trust-minimized**, and **publicly observable**. Payment metadata is publicly visible, enabling anyone to link relationships and behavior.
-- On private EVM chains, settlement is **permissioned**, **trusted**, and **privately observable**. Only trusted actors with special access can read payment metadata and link relationships and behavior.
-- With a privacy layer, "settlement" is **permissionless**, **trust-minimized**, and **privately verifiable**. Payment validity can be proven without making sensitive payment metadata publicly readable (although some metadata may still be inferable depending on the design). In this model, the facilitator becomes a proof-verifier + state transition orchestrator.
+- On public EVM chains, settlement is **permissionless**, **trust-minimized**, and **publicly observable**.
+  - Payment metadata is publicly visible and anyone can link relationships and behavior.
+  - Weak-to-medium privacy typically keeps settlement public, but changes *how* it happens.
+- On private EVM chains, settlement is **permissioned**, **trusted**, and **privately observable**.
+  - Payment metadata is not publicly visible, but trusted operators can still link relationships and behavior.
+  - Weak-to-medium privacy typically keeps settlement privately observable to trusted actors, but changes *how* it happens.
+- With a privacy layer, "settlement" is **permissionless**, **trust-minimized**, and **privately verifiable**.
+  - Payment metadata is not publicly visible and it becomes difficult for anyone to link relationships and behavior.
+  - Strong privacy typically changes what “settlement” means and introduces stateful verification/reconciliation; the facilitator becomes a proof-verifier + state transition orchestrator rather than a simple "settlement" provider.
 
 The implementation of privacy-preserving settlement depends on the threat model:
 
-- Payer privacy only (weak-to-medium) can be approached on public EVM chains with relayers + stealth addresses and careful UX, but payment amounts and timing remain linkable.
-- Payer + amount + linkage privacy (strong) can be approached using a privacy layer (Aztec + Noir) that provides stronger privacy guarantees (shielded transfers), but it adds complexity.
+- Payer privacy only (weak-to-medium) can be approached on EVM chains with relayers + stealth addresses and careful UX, but payment amounts and timing remain linkable.
+- Payer + amount + linkage privacy (strong) can be approached using a privacy layer that provides stronger privacy guarantees (shielded transfers), but it adds complexity.
 
 This document attempts to address the following questions:
 
@@ -69,34 +75,34 @@ This document attempts to address the following questions:
 - What new components are required based on different approaches?
 - What is feasible in the near-term and required for strong privacy?
 
-Another important question to ask, but one that is not directly answered in this document: **At what point does this no longer fit the framing of "x402"?** x402 is an open protocol specification authored/maintained by Coinbase. Adding a privacy layer (and the resulting changes) may diverge from strict compliance with the current x402 specification. For that reason, the privacy-preserving facilitator may be better described as **x402-like** rather than “x402” in the strict sense. This document still uses “x402” as a shorthand, but specification compliance and naming remain an open question.
+Another important question to ask, but one that is not directly answered in this document: **At what point does this no longer fit the framing of "x402"?** x402 is an open protocol specification authored/maintained by Coinbase. Adding a privacy layer (and the resulting changes) may diverge from strict compliance with the current x402 specification. In this case, the privacy-preserving facilitator may be better described as **x402-like** rather than “x402” in the strict sense. This document still uses “x402” as a shorthand, but specification compliance and naming remain an open question and should be considered in further product development.
 
 ## Privacy Framework
 
-This section defines privacy objectives, identifies potential adversaries, and establishes the threat model used to evaluate implementation options.
+This section defines privacy in the context of x402 and privacy objectives, identifies potential adversaries, and establishes the threat model used to evaluate multiple implementation options that are explored in the following sections of this document.
 
 ### Privacy and x402
 
 The product lead of Aztec frames [“privacy on x402”](https://www.youtube.com/watch?v=MwZXCjcv8no) in two explicit questions:
 
 - **What should be private?** (resource, agent/user, metadata, facilitator)
-- **Who should it be private from?** (the resource, the agent, the facilitator, or the public/chain observers)
+- **Who should it be private from?** (the resource, the agent/user, the facilitator, or public chain observers)
 
 This is important to take into consideration because many properties are either:
 
 - **Not desirable** to hide (e.g. resource/facilitator identity can be helpful for analytics/reputation), or
-- **Not feasible** to hide without major trade-offs, so you often aim for "obfuscation" rather than absolute secrecy
+- **Not feasible** to hide without major trade-offs, so many approaches aim for "obfuscation" rather than absolute secrecy
 
-This reflects an important point reiterated throughout the talk: **privacy is a spectrum**. Not everything needs to be hidden, and different use cases require different privacy levels. In the context of x402 - and implementing a privacy-preserving facilitator - there are many trade-offs to consider, so this document explores multiple implementation options.
+The above framing reflects an important point reiterated throughout the talk: **privacy is a spectrum**. Not everything needs to be hidden, and different use cases require different approaches to privacy. In the context of x402 - and implementing a privacy-preserving facilitator - there are many trade-offs to consider and therefore multiple approaches should be considered.
 
-Another important product/market observation from the talk: x402 will most likely be dominated by agent <-> company flows (not "human wallet pays for content"), which increases the importance of hiding agent identity and payment metadata to avoid leakage of user patterns, proprietary agent strategies, and potential regulatory/data protection issues.
+Another important product/market observation from the talk: **x402 will most likely be dominated by agent↔company flows** (not "human wallet pays for content"), which increases the importance of hiding agent identity and payment metadata to avoid leakage of user patterns, proprietary agent strategies, and potential regulatory/data protection issues.
 
 ### Potential Adversaries
 
 Determine which of the following adversaries are of the greatest concern:
 
-- **Public chain observers**: see state, transactions, logs, MEV ordering
-- **API providers**: see request metadata (IP, user-agent, endpoint, timing)
+- **Public chain observers**: see state (balances), transactions, logs, MEV ordering
+- **Resource / API providers**: see request metadata (IP, agent/user, endpoint, timing)
 - **Facilitator operators**: see payment metadata (payer, payee, token, amount)
 - **Infrastructure providers**: see request headers/bodies, IPs, and timing in logs
 
@@ -120,16 +126,16 @@ At least one of the following should be an explicit product requirement:
 
 In practice, a “privacy-preserving facilitator” should target the following:
 
-- Stronger on-chain privacy (payer, payeee, and possibly amount)
+- Stronger on-chain privacy (payer, payee, and possibly amount)
 - Reasonable off-chain privacy (minimize what the facilitator logs/learns)
 
 ## Baseline Implementation
 
-This section provides a brief overview of the current implementation (which is not a privacy-preserving facilitator), then highlights the announced x402 v2 features that are not yet implemented (which may be in tension with a privacy-preserving facilitator), and finally it introduces some critical questions related to archtecture that should be considered.
+This section provides a brief overview of the current implementation (which is not a privacy-preserving facilitator), then highlights the announced x402 v2 features that are not yet implemented (which may be in tension with a privacy-preserving facilitator), and finally it introduces some critical questions related to the facilitator architecture that should be considered.
 
 ### Current x402 Facilitator
 
-The current [x402 facilitator](https://github.com/raid-guild/x402-facilitator-go) is written in Go. It uses [go-ethereum](https://github.com/ethereum/go-ethereum) to handle network interactions. It verifies and settles payments using the exact payment scheme. It supports EVM chains, two main networks (Ethereum and Base) and two test networks (Sepolia and Base Sepolia), and support for additional EVM chains can be easily added by extending the codebase. Authorized payments are verified and settled using ERC-20 tokens that implement [EIP-3009](https://eips.ethereum.org/EIPS/eip-3009).
+The current [x402 facilitator](https://github.com/raid-guild/x402-facilitator-go) is written in Go. It uses [go-ethereum](https://github.com/ethereum/go-ethereum) to handle network interactions. It verifies and settles payments using the exact payment scheme. It supports EVM chains, two main networks (Ethereum and Base) and two test networks (Sepolia and Base Sepolia), and support for additional EVM chains can be easily added by extending the codebase. Authorized payments are verified and settled using ERC-20 tokens that implement [EIP-3009](https://eips.ethereum.org/EIPS/eip-3009) (transfer with authorization).
 
 The x402 facilitator exposes three endpoints and assumes the following:
 
@@ -186,34 +192,177 @@ Key characteristics of the current exact payment flow:
 
 Features announced in [x402 v2](https://www.x402.org/writing/x402-v2-launch) that are not included in the current implementation (with notes on potential concerns for privacy):
 
-- **Indexing / Discovery**: a “discovery extension” that enables facilitators to automatically index available endpoints (and associated pricing/routes/metadata)
-  - indexing can turn the facilitator into a metadata aggregation point (who offers what, at what price), so it should minimize stored discovery metadata, tightly restrict access, and avoid logging/linking discovery queries to request/payment flows
-- **Unified payment interface**: a single payment format that spans chains and legacy rails, with standardized network/asset identifiers
-  - if the facilitator normalizes identifiers and/or routes across rails, it can become a cross-rail correlation point (mapping the same client/request across networks/assets); minimize collected routing inputs, avoid stable cross-rail identifiers in logs/telemetry, and keep routing decisions as ephemeral as possible
-- **Dynamic recipients/pricing**: per-request routing to different recipients/roles/callback logic (useful for marketplaces and multi-tenant APIs)
-  - routing inputs can encode sensitive business context (tenant, segment, workload) and become highly identifying if the facilitator logs them or links them across requests; treat routing signals as sensitive, minimize retention, and avoid using them as durable keys/labels in metrics
-- **Multi-facilitator support**: clients/servers can express preferences (chains/assets/facilitators) and the SDK selects the best match
-  - multi-facilitator designs expand the set of observers; if clients probe multiple facilitators or send rich preference lists, each facilitator can learn client intent/capabilities and preference patterns can become a fingerprint unless those signals are narrowly scoped and not logged/retained
-- **Reusable access / wallet-based sessions**: enables session-like access so clients can avoid the full payment flow on repeated requests
-  - if the facilitator participates in issuing/verifying access receipts, it must avoid minting stable identifiers that work across services; use short-lived, audience-scoped tokens/receipts and avoid durable user identifiers in facilitator-visible state
-- **Modular paywall package**: paywall extracted into a dedicated package with built-in backends (EVM/Solana) and room for custom backends
-  - while this is primarily a server/paywall concern, it can indirectly impact facilitator privacy if paywall backends forward “extra” context into facilitator calls (tenant IDs, user handles, request metadata); keep facilitator interfaces “minimum necessary data” and enforce redaction/allowlists across all backend integrations
-- **Payment data moved to headers + modernized header conventions**: payment-related data is moved into HTTP headers and header naming is modernized
-  - headers are frequently captured by gateways/proxies and app logs; the facilitator should treat payment headers as sensitive (redact at ingress, avoid echoing back in errors, and be explicit about logging/retention boundaries)
+- **Indexing / Discovery**: a “discovery extension” that enables facilitators to automatically index available endpoints/metadata
+  - indexing can turn the facilitator into a metadata aggregation point (who offers what, at what price); facilitators should minimize collection and retention of discovery metadata, tightly restrict access, redact discovery metadata in logs/traces/errors by default, and avoid linking discovery data to payment flows
+- **Unified payment interface**: a single payment format that spans chains with standardized network/asset identifiers
+  - a unified payment format alongside indexed endpoint metadata can make the facilitator a cross-chain correlation point (mapping clients/requests to assets); facilitators should minimize collection and retention of identifiers, tightly restrict access, redact identifiers in logs/traces/errors by default, and avoid linking identifiers to payment flows
+- **Dynamic recipients/pricing**: per-request routing to different recipients/roles/callback logic
+  - routing inputs can encode sensitive business context and become identifying if forwarded to the facilitator and logged or correlated across requests; facilitators should minimize collection and retention of routing context, tightly restrict access, redact routing fields in logs/traces/errors by default, and avoid correlating routing signals across multiple requests
+- **Multi-facilitator support**: clients/servers express preferences (chains/assets/facilitators) and the SDK selects the best match
+  - multi-facilitator support expands the set of observers and can reveal client preferences if clients/servers probe multiple facilitators during selection or forward preferences to facilitators; facilitators should minimize collection and retention of preference signals, tightly restrict access, redact preference signals in logs/traces/errors by default, and avoid correlating preference signals across requests
+- **Reusable access / sessions**: enables session-like access so clients can avoid the full payment flow on repeated requests
+  - receipt/session identifiers can create cross-service correlators if the facilitator handles issuance/verification or receives forwarded receipt/session identifiers; facilitators should minimize collection and retention of receipt/session identifiers, tightly restrict access, redact receipt/session identifiers in logs/traces/errors by default, and avoid reusing identifiers across services or long time windows
+- **Modular paywall package**: paywall extracted into a dedicated package with built-in backends and room for custom backends
+  - modular paywall backends can leak “extra” request context into facilitator calls; facilitators should minimize collection and retention of "extra" request context, tightly restrict access, redact non-allowlisted fields in logs/traces/errors by default, and avoid linking "extra" request context to payment flows
+- **Payment data moved to headers**: payment-related data is carried in HTTP headers
+  - moving payment data into client↔server headers can increase leakage risk when the facilitator is in the request path (gateway/proxy/edge paywall) or when servers forward request context to the facilitator; facilitators should minimize collection and retention of header context, tightly restrict access, redact header values in logs/traces/errors by default, and avoid echoing header values in errors
 
 ### Architecture Considerations
 
-The current x402 facilitator is designed for a **serverless environment** and follows a stateless model. The Aztec/Noir design approach introduce requirements that may be incompatible with this architecture, such as stateful receipt tracking, indexer dependencies, and key management. Additionally, the current facilitator is written in **Go**, while Aztec/Noir tooling is primarily available in Rust and TypeScript.
+The current x402 facilitator is designed for a **serverless environment** and therefore follows a **stateless** model, which strongly shapes what privacy improvements are practical and how much operational complexity is introduced.
 
-**Key questions to resolve**: Should the **existing Go facilitator** be extended to deliver privacy improvements (EVM-first approaches), or should a **new privacy-preserving facilitator** be built to support stronger privacy guarantees with Aztec/Noir? What changes require a stateful server and what changes can remain serverless? What programming language is most appropriate given Aztec/Noir ecosystem constraints?
+- **Baseline implementation**: a serverless/stateless design favors easy deployment on serverless platforms, simple request parsing + verification + settlement, and a single language/runtime (currently Go).
+- **EVM improvements (Option A)**: EVM-native privacy improvements can be delivered incrementally to the existing Go facilitator, but cross-cutting reliability requirements (durable receipt state tracking, idempotency, retries) and relayer/anti-replay mechanics may still push the implementation toward a stateful or hybrid architecture even if settlement remains EVM-native.
+- **Aztec/Noir (Option B)**: strong privacy via a new settlement/privacy domain tends to require stateful receipt tracking, indexers, and key/bridge coordination, and it is constrained by ecosystem tooling that is primarily written in Rust and TypeScript, all of which can push against a purely serverless Go service.
 
-These architectural decisions are further explored in the [Facilitator Architecture Strategy](#facilitator-architecture-strategy) section after both privacy implementation options are presented.
+How to map these constraints into an execution plan (extend the existing Go facilitator vs build a new stateful facilitator) is addressed in the [Facilitator Architecture Strategy](#facilitator-architecture-strategy) section after both options are presented.
 
-## Option A: Aztec + Noir
+## Option A: EVM Improvements
+
+This option focuses on **incremental, EVM-native improvements** that can reduce linkage and metadata leakage without changing the underlying settlement domain. These approaches generally deliver **weak-to-medium privacy** (public chain observers can still see amounts/timing), but are simpler to integrate and can often be delivered in phases alongside operational hardening.
+
+### High-Level Architecture <a id="option-a-high-level-architecture"></a>
+
+EVM improvements keep settlement in an EVM environment, so `/verify` and `/settle` can stay close to the current "exact" flow. The privacy lever is primarily **who broadcasts**, **which addresses appear on-chain**, and (optionally) **whether the payer pre-deposits into a pool** and later spends via a receipt/nullifier model.
+
+### EVM Exact Flow and What Changes <a id="option-a-evm-exact-flow-and-what-changes"></a>
+
+Option A keeps settlement EVM-native, but changes vary by path (A1/A1.5/A2+/A3). The deltas below use the same framing as Option B and refer to the candidate approach sections for details.
+
+`paymentPayload` structure changes:
+
+- **A1/A1.5 (relayers/stealth/obfuscation)**: no structural change is required if the flow continues to use EIP-3009 authorization as the payment primitive.
+- **A2+ (pool/receipt model)**: `paymentPayload` shifts from “EIP-3009 authorization” toward a receipt/nullifier/claim that proves a prepaid spend (the exact shape depends on the pool design).
+- **A3 (network/privacy hygiene)**: no structural change is required; changes are primarily operational and transport-level.
+
+`paymentRequirements` structure changes:
+
+- **A1/A1.5**: `payTo` may remain a direct recipient or represent a stealth-derivation scheme; reconciliation requirements increase when one-time recipients are used.
+- **A2+**: `paymentRequirements` may represent “credits/pricing for a spend” rather than “pay this recipient on this request,” depending on the pool and accounting model.
+- **A3**: no structural change is required.
+
+`/verify` processing changes:
+
+- **A1/A1.5**: `/verify` remains close to the current exact flow (validate authorization against `paymentRequirements`), but may need additional policy around relayed broadcasts and stealth reconciliation.
+- **A2+**: `/verify` validates receipt/nullifier/claim semantics (request binding, one-time use) rather than EIP-3009 authorization.
+- **A3**: verification logic is unchanged, but logging/telemetry and metadata-handling requirements are stricter.
+
+`/settle` processing changes:
+
+- **A1/A1.5**: settlement can be broadcast by the payer or a relayer; `/settle` must accommodate relayer retries, confirmation thresholds, and replay/idempotency behavior.
+- **A2+**: `/settle` may become “record/spend receipt” (or “mark credit consumed”) rather than “broadcast an ERC-20 authorization,” depending on the pool design.
+- **A3**: settlement mechanics are unchanged; operational controls are tightened.
+
+Failure modes and state:
+
+- **A1/A1.5/A2+**: relayers and/or receipt models tend to introduce more retries and asynchronous confirmation patterns; durable state tracking and clear pending/finalized states may be required (see [Baseline Requirements](#baseline-requirements)).
+
+### Core Technical Requirements <a id="option-a-core-technical-requirements"></a>
+
+Regardless of which EVM improvement path is adopted (A1/A1.5/A2/A3), the facilitator needs:
+
+- **Broadcast and confirmation strategy**: define who broadcasts (payer vs relayer), what evidence `/verify` accepts for gating, when `/settle` is invoked, and what confirmation/finality threshold applies.
+- **Recipient model**: decide between direct recipients (status quo), stealth recipients (one-time addresses), or a pool/receipt model (A2+), and define the reconciliation/accounting path implied by the choice.
+- **Relayer policy + economics (A1/A1.5)**: define relayer trust/allowlisting, fee sponsorship, rate limits/abuse controls, and privacy expectations for relayed broadcasts.
+- **Shared reliability + operational hygiene**: see [Baseline Requirements](#baseline-requirements) and [Operation Requirements](#operation-requirements).
+
+### Candidate Approaches <a id="option-a-candidate-approaches"></a>
+
+#### A1) Relayer + stealth address settlement (medium privacy, low complexity)
+
+- **Summary**: Relayer broadcast + stealth recipients to reduce direct payer attribution and recipient address reuse without changing the settlement domain.
+- **Mechanism**:
+  - Relayers (payer does not broadcast)
+  - Stealth recipient addresses (provider receives to one-time addresses)
+- **Privacy impact**:
+  - Reduces direct payer attribution and recipient address reuse
+  - Amounts/timing remain public; chain-level linkage remains possible
+- **Operational impact**:
+  - Requires relayer operations and retry/failure handling
+  - Requires provider reconciliation for stealth recipients
+- **Trade-offs / limitations**:
+  - Transfer events remain public; sophisticated chain analysis can still correlate behavior
+
+#### A1.5) Obfuscate the agent via shared broadcasters / common entrypoints (weak-to-medium privacy)
+
+- **Summary**: Obfuscation via shared broadcasters/common entrypoints to reduce attribution to a specific agent on public EVM.
+- **Mechanism**:
+  - Route many agents through a common broadcaster/relayer/paymaster identity
+- **Privacy impact**:
+  - Reduces attribution to a specific underlying agent (obfuscation, not cryptographic privacy)
+  - Payment metadata remains public; does not hide amounts/timing
+- **Operational impact**:
+  - Requires shared broadcaster/relayer operations and abuse controls
+- **Trade-offs / limitations**:
+  - Does not provide cryptographic privacy; only reduces casual linkage
+
+#### A2) “Deposit then spend” (prepaid credits) using a privacy pool (stronger privacy, higher complexity)
+
+- **Summary**: Prepaid pool model where deposits are later spent to produce per-request receipts, improving payer unlinkability at higher complexity.
+- **Mechanism**:
+  - Deposit into a pool; later spend anonymously (nullifiers) to generate receipts for API calls
+  - Can be built on EVM (ZK pool contract + off-chain proving) or on an L2 with better proving UX
+- **Privacy impact**:
+  - Stronger payer unlinkability than stealth addresses alone
+- **Operational impact**:
+  - Introduces a pool contract, proving/circuit infrastructure, and long-lived operational maintenance
+  - Increases compliance/abuse risk and requires explicit mitigation
+- **Trade-offs / limitations**:
+  - Higher complexity and maintenance burden than A1/A1.5
+
+#### A2.5) Privacy pools / mixers as “EVM-adjacent” privacy domains (stronger unlinkability, UX trade-offs)
+
+- **Summary**: Use a privacy pool/mixer as a mini “privacy domain” adjacent to the EVM payment flow.
+- **Mechanism**:
+  - Deposit into a pool
+  - Later withdraw/spend to reduce linkability between deposit and payment
+- **Privacy impact**:
+  - Can improve unlinkability/linkage privacy compared to stealth addresses alone
+- **Operational impact**:
+  - Adds monitoring/compliance complexity and operational constraints (liquidity, timing)
+- **Trade-offs / limitations**:
+  - UX friction (deposits, withdrawal timing, liquidity considerations)
+
+#### A2.6) Confidential transfers (hide amount/token metadata) via confidentiality primitives (medium privacy, specialized)
+
+- **Summary**: Confidential transfer primitives to hide payment metadata (amount/token) while keeping participant identities more visible.
+- **Mechanism**:
+  - Confidential token/transfer primitives (e.g. FHE-style “confidential tokens”)
+- **Privacy impact**:
+  - Can hide amount/token metadata even on EVM-like environments
+  - Does not, by itself, hide who is paying whom
+- **Operational impact**:
+  - Requires careful UX and integration constraints specific to the chosen confidentiality primitive
+- **Trade-offs / limitations**:
+  - Specialized approach with narrower applicability than A1/A2 paths
+
+#### A3) Hide linkage at the application layer (network privacy)
+
+- **Summary**: Application/network-layer hygiene to reduce off-chain linkage without changing on-chain visibility.
+- **Mechanism**:
+  - Tor/i2p / privacy-preserving RPC
+  - Minimized facilitator logs (redaction, short retention)
+  - Avoid embedding correlatable identifiers in payment payloads
+- **Privacy impact**:
+  - Improves privacy against API providers and infrastructure observers
+  - Does not fix on-chain linkability on public EVM settlement
+- **Operational impact**:
+  - Requires careful logging/telemetry defaults and transport/network configuration
+- **Trade-offs / limitations**:
+  - Primarily mitigates off-chain leakage; on-chain metadata remains public
+
+### Feasibility / Open Questions <a id="option-a-feasibility"></a>
+
+- How much privacy is actually required (payer only vs payer+linkage vs amount)?
+- Should the implementation stay strictly compatible with EIP-3009 (A1/A1.5), or introduce a new scheme/receipt model (A2+)?
+- Who pays gas / runs the relayer, and what are the abuse controls for relayed broadcasts?
+- If using stealth recipients: what is the provider reconciliation UX and how can new correlatable identifiers be avoided off-chain?
+
+## Option B: Aztec + Noir
 
 This section explores what an Aztec/Noir facilitator could look like for strong on-chain privacy, and the technical/product requirements to make it compatible with (or comparable to) x402.
 
-### High-Level Architecture <a id="option-a-high-level-architecture"></a>
+### High-Level Architecture <a id="option-b-high-level-architecture"></a>
 
 In an Aztec/Noir design, the “settlement” action moves from public EVM execution to a **private state transition** (shielded transfer and/or private application call), producing artifacts that the Aztec network accepts. The facilitator remains an API-facing service that abstracts away the complexity of network interactions, but additionally takes on privacy-layer responsibilities:
 
@@ -222,9 +371,9 @@ In an Aztec/Noir design, the “settlement” action moves from public EVM execu
 - **Bridge coordinator (optional)**: if assets originate on an EVM network and must be bridged to Aztec network
 - **Keyed recipient manager (optional)**: if receiving keys/accounts for API providers need to be managed
 
-An important note about the available tooling and the programming language used for the facilitator: Aztec/Noir client/proving/broadcast tooling is primarily written in **Rust** and **TypeScript**. A facilitator written in **Go** will most likely need a Rust/Typescript sidecar (HTTP/gRPC) for transaction/proof/inclusion/indexing, or to rewrite the Aztec-facing components in Go.
+An important note about the available tooling and the programming language used for the facilitator: Aztec/Noir client/proving/broadcast tooling is primarily written in **Rust** and **TypeScript**. A facilitator written in **Go** will most likely need a Rust/TypeScript sidecar (HTTP/gRPC) for transaction/proof/inclusion/indexing, or to rewrite the Aztec-facing components in Go.
 
-### EVM Exact Flow and What Changes <a id="option-a-evm-exact-flow-and-what-changes"></a>
+### EVM Exact Flow and What Changes <a id="option-b-evm-exact-flow-and-what-changes"></a>
 
 The biggest change is **how a payment is authorized and proven**. In the current EVM “exact” flow, the client signs an **authorized transfer** (EIP-712 typed data + EIP-3009 signature), the API provider calls `/verify` to validate the authorization, and `/settle` to process the transfer. In an Aztec/Noir design, the client produces (or helps produce) a transaction/proof, the API provider calls `/verify` to validate a verifier-friendly private receipt/proof, and `/settle` to coordinate submission/finality in the privacy domain.
 
@@ -246,246 +395,110 @@ The biggest change is **how a payment is authorized and proven**. In the current
 `/settle` processing changes:
 
 - **Submission target**: EVM: submit the EIP-3009-authorized transfer to an EVM chain → Aztec/Noir: submit/coordinate the privacy-domain transaction/proof (and any bridging/relaying) and track finality
-- **Receipt production**: EVM: the public chain produces the tx hash/event evidence after settlement → Aztec/Noir: the privacy domain produces whatever receipt artifacts are needed to **re-verify the same payment** on subsequent `/verify` calls (e.g. if the initial verification returns “pending” and later you re-check for inclusion/finality), such as proofs, inclusion/finality evidence, and commitments
+- **Receipt production**: EVM: the public chain produces the tx hash/event evidence after settlement → Aztec/Noir: the privacy domain produces whatever receipt artifacts are needed to **re-verify the same payment** on subsequent `/verify` calls (e.g. if the initial verification returns “pending” and later re-checks for inclusion/finality), such as proofs, inclusion/finality evidence, and commitments
 
-### Core technical requirements <a id="option-a-core-technical-requirements"></a>
+### Core Technical Requirements <a id="option-b-core-technical-requirements"></a>
 
-#### 1) A private payment primitive compatible with x402’s “exact” scheme
+Regardless of which Aztec/Noir approach is adopted, the facilitator needs:
 
-Define what constitutes “paid” for a single API request:
+- **Paid definition + receipt/claim format**: define what “paid” means for a single API request (private transfer, private deposit, or a receipt/claim primitive) and the receipt artifacts the facilitator will accept.
+- **Request binding + anti-replay semantics**: ensure receipt artifacts are bound to request-specific context (e.g. a canonical request digest) and cannot be replayed (nullifier/unique spend semantics).
+- **Verification and finality strategy**: define what evidence `/verify` accepts for gating (e.g. inclusion proof vs verifier-friendly proof) and how “pending vs finalized” states are represented when finality is asynchronous.
+- **Settlement responsibilities**: define what `/settle` does (submit/broadcast private tx if needed, confirm inclusion, and mark receipt/claim spent/consumed), including withdrawal and batching strategy if providers ultimately want funds on EVM.
+- **Provider onboarding + key/custody model**: define how providers receive privately (recipient identifiers, onboarding storage) and whether custody is non-custodial vs managed.
+- **Indexing + reconciliation**: define what indexing is required to reconcile private receipts/commitments and what provider-facing reconciliation mechanism exists without exposing payer details.
+- **Asset availability + bridging constraints**: ensure assets exist and are liquid in the privacy domain and define bridging/operational handling (liquidity, downtime, partial failures).
+- **Shared reliability + operational hygiene**: see [Baseline Requirements](#baseline-requirements) and [Operation Requirements](#operation-requirements).
 
-- **Private transfer** of the required amount to a recipient
-- Or **private deposit** into a provider-owned note set
-- Or **private receipt note** minted to provider proving the transfer occurred
+### Candidate Approaches <a id="option-b-candidate-approaches"></a>
 
-The facilitator must be able to verify (quickly and deterministically) that:
+#### B1) App-circuit receipt (public output used by `/verify`)
 
-- The payment corresponds to the request (nonce / request-id binding)
-- The payment was authorized under the scheme (payer signature/account auth)
-- The amount and asset match those within `paymentRequirements`
-- The payment is not replayed (one-time spend / nullifier / unique note)
+- **Summary**: A custom Noir/Aztec app emits a verifier-friendly public output that the facilitator uses as the “paid” receipt signal.
+- **Mechanism**:
+  - Private payment/app execution produces a public output (receipt/claim) suitable for `/verify`
+  - Facilitator verifies receipt validity against `paymentRequirements` and anti-replay rules
+- **Privacy impact**:
+  - Can reduce on-chain visibility of payer/payee/amount compared to public EVM settlement
+  - Public outputs can still become correlators unless receipt fields are carefully minimized
+- **Operational impact**:
+  - Requires circuit/app design, proving UX, and a verifier implementation
+  - Requires clear receipt format/versioning and backwards compatibility plan
+- **Trade-offs / limitations**:
+  - Receipt design becomes a protocol surface; poor receipt design can reintroduce linkability
 
-#### 2) Noir circuits (or Aztec private app) to enforce payment correctness
+#### B2) Receipt-note + commitment (encrypted receipt note for providers)
 
-At minimum, the private logic must enforce:
+- **Summary**: The payment creates an encrypted receipt note for the provider, and `/verify` relies on public commitments and/or inclusion evidence rather than a fully public receipt.
+- **Mechanism**:
+  - Transaction creates an encrypted receipt note for the provider (or provider-owned note set)
+  - Facilitator verifies a public commitment/inclusion evidence and enforces one-time use semantics
+- **Privacy impact**:
+  - Limits what is revealed in public outputs, shifting more detail into encrypted receipt material
+  - Provider note discovery and indexing must avoid creating new correlators
+- **Operational impact**:
+  - Requires note discovery/reconciliation UX for providers and likely indexing support
+  - Requires a clear mapping between commitments and provider reconciliation without leaking payer details
+- **Trade-offs / limitations**:
+  - Higher reconciliation complexity than B1; operational correctness depends on indexing and provider workflows
 
-- **Value conservation** to ensure the correct asset and amount is used
-- **Recipient correctness** to ensure the intended provider identity is paid
-- **Request binding** with a request digest to ensure the proof cannot be reused
-- **Anti-replay** with a nullifier derived from (payer secret, request digest) or a unique note consumption
+#### B3) Inclusion-first vs proof-first verification (timing model)
 
-#### 3) Verification strategy (what `/verify` does)
+- **Summary**: The gating model can require inclusion/finality evidence before access (higher latency, stronger finality) or allow a soft-verify then finalize model (lower latency, requires durable state and reconciliation).
+- **Mechanism**:
+  - **Inclusion-first**: `/verify` gates on a tx hash + inclusion/finality proof
+  - **Proof-first / soft-verify**: `/verify` accepts a verifier-friendly proof/claim and reconciles inclusion/finality asynchronously
+- **Privacy impact**:
+  - Primarily affects timing/latency and reconciliation patterns rather than core cryptographic privacy
+  - Different timing models can create distinct metadata patterns unless operational controls are applied
+- **Operational impact**:
+  - Soft-verify models require durable state tracking, retries, and explicit reconciliation flows
+  - Inclusion-first models simplify reconciliation but increase end-user latency
+- **Trade-offs / limitations**:
+  - Finality vs latency trade-off; reconciliation complexity shifts depending on the chosen model
 
-You will need a verifier-friendly object for the API edge:
-
-- A **transaction hash + inclusion proof** (or equivalent) that the payment happened
-- Or a **standalone ZK proof** verifiable by the facilitator without waiting for inclusion (harder; may weaken finality)
-
-`/verify` latency must remain acceptable for API gating. This pushes toward:
-
-- A two-step approach: **soft-verify** (proof shape, signature, nonces) then **finalize** (inclusion) asynchronously
-- Or an escrow model: accept “pending receipt” for low-risk endpoints and reconcile later
-
-#### 4) Settlement strategy (what `/settle` does)
-
-In Aztec, “settlement” would mean:
-
-- “Submit private tx” (facilitator helps broadcast/prove)
-- “Confirm inclusion and mark receipt spent/consumed”
-
-If the API provider ultimately wants funds on an EVM address, you also need:
-
-- **Withdrawal flow** from Aztec to EVM
-- Optional aggregation/batching to reduce linkability and fees
-
-#### 5) Asset availability + bridging
-
-Strong practical constraint: the payment asset must exist and be liquid in the privacy domain.
-
-Requirements:
-
-- A supported stable asset representation (USDC-like) on Aztec, or a wrapped/bridged asset.
-- A standard bridging UX and operational playbook:
-  - liquidity management
-  - bridge downtime handling
-  - partial failures and stuck exits
-
-#### 6) Recipient key management (provider onboarding)
-
-Providers need a way to receive privately:
-
-- Provision an Aztec account/address for each org
-- Store recipient metadata in the dashboard DB (carefully; avoid linking to EVM identities if that’s a privacy goal)
-- Decide custody model:
-  - **Non-custodial**: provider controls keys; dashboard stores only public recipient identifiers
-  - **Custodial / managed**: facilitator holds keys (higher risk; conflicts with “trustless” positioning)
-
-#### 7) Indexing and observability in a private system
-
-On public chains, “did payment happen?” is easy to query. In shielded systems, you may need:
-
-- A dedicated **indexer** for relevant public outputs (commitments/receipts) and finalized blocks
-- A provider-facing mechanism to reconcile receipts without exposing payer details
-
-#### 8) Abuse controls (privacy-induced, cross-cutting)
-
-Privacy increases abuse risk (harder attribution), but most mitigations are **deployment-level** rather than Aztec-specific (see [Operation requirements](#operation-requirements)).
-
-Aztec/Noir can introduce one additional product/architecture lever:
-
-- Deposit/credit models to reduce per-request proof overhead (optional)
-
-### Candidate approaches <a id="option-a-candidate-approaches"></a>
-
-There are a few plausible ways to produce a verifier-friendly “paid” signal (receipt) while keeping payment details private:
-
-- **App-circuit approach**: a custom Noir “x402 payment app” that emits a public output (receipt) used by `/verify`
-- **Receipt-note approach**: the transaction creates an encrypted receipt note for the provider, and `/verify` checks a public commitment and/or tx inclusion
-- **Inclusion-first vs proof-first**: either gate on a tx hash + inclusion proof (stronger finality, higher latency) or allow a “soft-verify then finalize” model (lower latency, requires durable state + reconciliation)
-
-### Feasibility notes / open questions <a id="option-a-feasibility"></a>
+### Feasibility / Open Questions <a id="option-b-feasibility"></a>
 
 Before committing, these must be answered with concrete Aztec capabilities and a prototype:
 
-- Can we get a **fast enough** “verification artifact” for API gating?
+- Can a **fast enough** “verification artifact” be produced for API gating?
 - What is the best “receipt” representation (public output vs inclusion vs note)?
-- Do we require users to hold assets on Aztec (UX impact)?
+- Does the design require users to hold assets on Aztec (UX impact)?
 - What does bridging do to privacy (timing/linkability at entry/exit)?
-- How do we solve **note discovery** cleanly for providers (i.e. how the recipient efficiently discovers encrypted receipts/notes that belong to them)?
+- How can **note discovery** be handled cleanly for providers (i.e. how the recipient efficiently discovers encrypted receipts/notes that belong to them)?
 - What latency budget is acceptable given that many privacy systems provide stronger privacy for **resting assets** (and may encourage batching/delays that trade off “instant” payments)?
-
-## Option B: EVM Alternatives
-
-If Aztec integration is too heavy near-term, you can still improve privacy meaningfully while staying EVM-native. These options generally provide **weaker privacy** than shielded L2, but are simpler.
-
-### High-Level Architecture <a id="option-b-high-level-architecture"></a>
-
-EVM alternatives keep settlement in an EVM environment, so `/verify` and `/settle` can stay close to today's "exact" flow. The privacy lever is primarily **who broadcasts**, **which addresses appear on-chain**, and (optionally) **whether the user pre-deposits into a pool** and later spends via a receipt/nullifier model.
-
-### EVM Exact Flow and What Changes <a id="option-b-evm-exact-flow-and-what-changes"></a>
-
-Depending on which alternative you adopt, changes range from minimal to significant:
-
-- **Minimal-change path (B1/B1.5)**: keep EIP-3009 transfers, but change broadcast + recipient strategy (relayers, stealth recipients), and tighten retry/idempotency behavior.
-- **New-scheme path (B2/B2.5)**: introduce a pool/receipt model ("deposit then spend") where `/verify` checks a receipt/nullifier and `/settle` may become "record/spend receipt" rather than "submit an ERC-20 transfer authorization".
-- **Off-chain/network privacy path (B3)**: constrain logging/telemetry + transport metadata so the API provider/infrastructure observers learn less, even though on-chain data remains public.
-
-### Core technical requirements <a id="option-b-core-technical-requirements"></a>
-
-Regardless of which candidate approach you choose, EVM alternatives need:
-
-- **Request binding + replay safety**: a canonical `requestDigest` and a spent-store/idempotency key so “one payment → one request” can be enforced reliably.
-- **Broadcast and confirmation strategy**: define who broadcasts (payer vs relayer), what `/settle` is allowed to do, and what “confirmed enough” means for gating.
-- **Recipient model**: decide between direct recipients (status quo), stealth recipients (one-time addresses), or a pool/receipt model (B2+).
-- **Privacy-safe observability**: logs/metrics need defaults that avoid capturing `X-402-Payment` artifacts and correlatable identifiers.
-
-### Candidate approaches <a id="option-b-candidate-approaches"></a>
-
-#### B1) Relayer + stealth address settlement (medium privacy, low complexity)
-
-Idea:
-
-- Users pay on EVM, but avoid directly revealing the payer by using:
-  - relayers (payer doesn’t broadcast)
-  - stealth recipient addresses (provider receives to one-time addresses)
-
-Limitations:
-
-- Transfer events are still public; amounts and timing are linkable.
-- Sophisticated chain analysis may still correlate payer via funding sources and patterns.
-
-#### B1.5) Obfuscate the agent via shared broadcasters / common entrypoints (weak-to-medium privacy)
-
-If “hide the agent” is the primary goal but you must remain on a public EVM, a pragmatic approach is **obfuscation**:
-
-- Many users/agents route through a common broadcaster/relayer/paymaster identity, making it harder to attribute activity to a specific underlying agent.
-
-This is not cryptographic privacy and does not hide payment metadata, but can materially reduce casual linkage.
-
-#### B2) “Deposit then spend” (prepaid credits) using a privacy pool (stronger privacy, higher complexity)
-
-Idea:
-
-- Users deposit into a pool, later spend anonymously (nullifiers) to generate receipts for API calls.
-
-This can be built:
-
-- On EVM with a ZK pool contract + off-chain proving
-- Or on an L2 with better proving UX
-
-Pros:
-
-- Stronger payer unlinkability than stealth addresses.
-
-Cons:
-
-- Adds a new pool contract, circuit, and long-term maintenance burden.
-- Compliance and abuse risk increases; operational and reputational risk needs explicit handling.
-
-#### B2.5) Privacy pools / mixers as “EVM-adjacent” privacy domains (stronger unlinkability, UX trade-offs)
-
-Related to the above, you can treat privacy pools as a mini “bridge domain” on the same chain:
-
-- **Deposit** into a pool
-- Later **withdraw/spend** in a way that reduces linkability between deposit and payment
-
-This can improve recipient unlinkability and/or payment linkage privacy compared to stealth addresses alone, but introduces UX friction (deposits, withdrawal timing, liquidity considerations) and monitoring/compliance complexity.
-
-#### B2.6) Confidential transfers (hide amount/token metadata) via confidentiality primitives (medium privacy, specialized)
-
-If your priority is **hiding payment metadata** (amount/token) while keeping participant identities more visible, confidentiality approaches (e.g., FHE-style “confidential tokens”) are a distinct point on the privacy spectrum:
-
-- Pros: can hide the “middle” metadata even on EVM-like environments.
-- Cons: does not, by itself, hide who is paying whom; still needs careful UX and integration constraints.
-
-#### B3) Hide linkage at the application layer (network privacy)
-
-Regardless of chain choice, you may need:
-
-- Tor/i2p / privacy-preserving RPC
-- Minimized facilitator logs (redaction, short retention)
-- Avoid embedding correlatable identifiers in payment payloads
-
-This improves privacy against the API provider and infrastructure observers, but does not fix on-chain linkability.
-
-### Feasibility notes / open questions <a id="option-b-feasibility"></a>
-
-- How much privacy is actually required (payer only vs payer+linkage vs amount)?
-- Do we want to stay strictly compatible with EIP-3009 (B1/B1.5), or are we willing to introduce a new scheme/receipt model (B2+)?
-- Who pays gas / runs the relayer, and what are the abuse controls for relayed broadcasts?
-- If using stealth recipients: what is the provider reconciliation UX and how do we avoid creating new correlatable identifiers off-chain?
 
 ## Facilitator Architecture Strategy <a id="facilitator-architecture-strategy"></a>
 
-After evaluating Option A (Aztec + Noir) and Option B (EVM Alternatives), a key architectural decision remains: should the **existing Go facilitator** be extended to support privacy-oriented flows, or should a **new privacy-preserving facilitator** be built (with the Go facilitator remaining focused on EVM settlement)?
+After evaluating Option A (EVM Improvements) and Option B (Aztec + Noir), a key architectural decision remains: should the **existing Go facilitator** be extended to support privacy-oriented flows, or should a **new privacy-preserving facilitator** be built (with the current Go facilitator remaining focused on EVM settlement)?
 
-### Strategy 1: Extend the existing Go facilitator
+### Strategy 1: Extend Existing Go Facilitator
 
-Extend the existing Go facilitator to deliver near-term privacy improvements while staying EVM-native (Option B), and keep the API-facing contract stable (`/verify`, `/settle`, auth, operational controls).
+Extend the existing Go facilitator to deliver near-term privacy improvements while staying EVM-native (Option A), and keep the API-facing contract stable (`/verify`, `/settle`, auth, operational controls).
 
 **Pros**:
 - Reuses existing production surface area (auth, request parsing, operational controls)
-- Keeps the existing deployment model (often serverless) and integration story stable
+- Keeps the existing integration story stable and can stay close to the current deployment model (serverless or lightly stateful/hybrid)
 - Lower time-to-ship for “medium privacy” improvements (relayers, stealth recipients, network privacy hygiene)
 
 **Cons**:
 - Cannot deliver shielded/on-chain privacy guarantees (amount/linkage privacy) without leaving EVM settlement
-- If you try to integrate Aztec/Noir deeply from Go, you will fight ecosystem/tooling constraints (Rust/TS-first) and statefulness/indexer/key-management requirements
+- If Option B becomes necessary later, integrating Aztec/Noir deeply from the existing Go service will run into ecosystem/tooling constraints (Rust/TS-first) and statefulness/indexer/key-management requirements
 
-### Strategy 2: Build a new privacy-preserving facilitator
+### Strategy 2: Build New Privacy-Preserving Facilitator
 
-Build a new, stateful facilitator optimized for Aztec/Noir (Option A). Keep the existing Go facilitator focused on EVM settlement (baseline + Option B improvements).
+Build a new, stateful facilitator optimized for Aztec/Noir (Option B). Keep the existing Go facilitator focused on EVM settlement (baseline + Option A improvements).
 
 In practice this usually looks like:
 
-- **Existing facilitator (Go)**: continues to serve EVM settlement and can adopt Option B improvements
-- **New facilitator (Rust/TypeScript likely)**: owns Aztec/Noir receipt verification, indexing, state transitions, key/bridging coordination
+- **Existing facilitator (Go)**: continues to serve EVM settlement and can adopt Option A improvements
+- **New facilitator (Rust/TypeScript likely)**: owns Option B (Aztec/Noir) receipt verification, indexing, state transitions, key/bridging coordination
 
 **Pros**:
 - Each facilitator can be optimized for its requirements (serverless vs stateful, Go vs Rust/TypeScript)
 - Independent scaling, deployment, and operational models
 - Clear separation of concerns and maintenance boundaries
-- Lower risk: you can deploy Option B improvements without blocking on Aztec research/prototyping
+- Lower risk: Option A improvements can be deployed without blocking on Aztec research/prototyping
 
 **Cons**:
 - Requires operating a second service/codebase (and deciding how clients/providers select which facilitator)
@@ -495,9 +508,9 @@ In practice this usually looks like:
 
 **Build a new privacy-preserving facilitator (Strategy 2) is recommended** for the following reasons:
 
-- **Clear separation of concerns**: Option A (Aztec + Noir) requires fundamentally different infrastructure (stateful, Rust/TypeScript, indexers) than an EVM-native Go facilitator.
-- **Independent evolution**: Option A and Option B can evolve at different paces. Option B improvements can ship immediately without waiting for Option A maturity.
-- **Risk mitigation**: If Option A proves unviable or requires significant pivots, Option B facilitator remains unaffected.
+- **Clear separation of concerns**: Option B (Aztec + Noir) requires fundamentally different infrastructure (stateful, Rust/TypeScript, indexers) than an EVM-native Go facilitator.
+- **Independent evolution**: Option A and Option B can evolve at different paces. Option A improvements can ship immediately without waiting for Option B maturity.
+- **Risk mitigation**: If Option B proves unviable or requires significant pivots, Option A facilitator remains unaffected.
 - **Operational simplicity**: Each facilitator can be deployed, scaled, and monitored independently with tools optimized for its architecture.
 
 **Open questions**:
@@ -507,14 +520,14 @@ In practice this usually looks like:
 
 ## Additional Requirements
 
-### Baseline requirements
+### Baseline Requirements
 
 These requirements are **cross-cutting** (apply to both Option A and Option B). They matter because privacy-oriented flows often introduce retries and asynchronous confirmation/finality, and production behavior will be unreliable without a minimal reliability baseline:
 
-- **Receipt state tracking**: maintain a durable mapping of `requestDigest` ↔ receipt/tx (e.g., tx hash, receipt ID) and explicit states for retries, reconciliation, and audits (often `pending -> finalized -> settled`).
-- **Idempotency**: make `/verify` and `/settle` safely retryable using an idempotency key (typically `requestDigest`) so repeated calls do not double-submit or produce inconsistent outcomes.
+- **Receipt state tracking**: maintain a durable mapping of an idempotency key (e.g. `requestDigest`, or another stable request/payment binding) ↔ receipt/tx (e.g. tx hash, receipt ID) and explicit states for retries, reconciliation, and audits (often `pending -> finalized -> settled`).
+- **Idempotency**: make `/verify` and `/settle` safely retryable using an idempotency key (e.g. `requestDigest`, or another stable request/payment binding) so repeated calls do not double-submit or produce inconsistent outcomes.
 
-### Operation requirements
+### Operation Requirements
 
 These requirements are **cross-cutting** (apply regardless of whether settlement uses the current EVM implementation of `exact` (EIP-3009) or a privacy-preserving approach). They matter because privacy failures often happen via **observability and abuse paths**, not the cryptographic scheme itself.
 
@@ -529,30 +542,30 @@ These requirements are **cross-cutting** (apply regardless of whether settlement
 - Logging is minimal (mostly internal errors), but platform/infra logs may still capture request bodies/headers unless explicitly configured.
 - Make redaction + safe logging patterns an explicit requirement so deployments don’t accidentally log `X-402-Payment` artifacts (or correlatable request IDs).
 
-### Dashboard requirements
+### Dashboard Requirements
 
 These requirements are dashboard-facing (onboarding, UX states, and product controls). They matter for delivery, but are not directly relevant to evaluating the privacy-preserving facilitator’s protocol/security model.
 
-#### Dashboard requirements (baseline)
+#### Dashboard Requirements (baseline)
 
 - **Scheme/network extensibility**: model `paymentRequirements` so multiple schemes/networks can coexist cleanly (the current EVM implementation of `exact` (EIP-3009) plus future privacy-oriented schemes).
-- **Provider onboarding**: the org needs to configure a “recipient identity” for the chosen scheme (EVM address in the current flow; privacy-domain recipient identifier for Option A; stealth/prepaid config if pursued in Option B).
-- **Lifecycle states**: UX should handle outcomes beyond “paid/not paid” (e.g., `pending`, `finalized`, retries, and reconciliation).
+- **Provider onboarding**: the org needs to configure a “recipient identity” for the chosen scheme (EVM address in the current flow; privacy-domain recipient identifier for Option B; stealth/prepaid config if pursued in Option A).
+- **Lifecycle states**: UX should handle outcomes beyond “paid/not paid” (e.g. `pending`, `finalized`, retries, and reconciliation).
 
-#### Option A: dashboard requirements
+#### Option B: dashboard requirements
 
-The current dashboard is tightly coupled to the EVM "exact / EIP-3009" flow (it constructs an `X-402-Payment` payload by signing an EIP-712 authorization, then retries). The baseline dashboard requirements still apply. Option A typically adds the following Aztec/Noir-specific needs:
+The current dashboard is tightly coupled to the EVM "exact / EIP-3009" flow (it constructs an `X-402-Payment` payload by signing an EIP-712 authorization, then retries). The baseline dashboard requirements still apply. Option B typically adds the following Aztec/Noir-specific needs:
 
 - **Aztec recipient onboarding**: store an Aztec receiving identifier per org (address / recipient key / viewing key depending on primitives + custody model).
 - **Client payment construction changes**:
   - Replace “sign EIP-712 `TransferWithAuthorization`” with “create Aztec private payment + produce a verifier-friendly receipt”.
   - Integrate an Aztec-compatible wallet/provider UX (or a hosted payment agent) so the client can produce the payment artifact.
   - Add UX for **bridging / funding the privacy domain** if assets must be moved into Aztec before spending.
-- **Async finality UX**: surface “soft-verified vs finalized” outcomes cleanly to users/admins (especially if you allow gating on pending receipts).
+- **Async finality UX**: surface “soft-verified vs finalized” outcomes cleanly to users/admins (especially if gating on pending receipts is allowed).
 
-#### Option B: dashboard requirements
+#### Option A: dashboard requirements
 
-Compared to Option A, Option B can stay closer to the current dashboard implementation. The baseline dashboard requirements still apply. Option B typically adds privacy-aware controls and (optional) product paths:
+Compared to Option B, Option A can stay closer to the current dashboard implementation. The baseline dashboard requirements still apply. Option A typically adds privacy-aware controls and (optional) product paths:
 
 - **Relayer-aware payment UX**: allow users to opt into relayed broadcasts (and show trade-offs: latency, failure modes, fee sponsorship).
 - **Stealth recipient onboarding (if pursued)**: let an org configure the metadata needed to derive one-time recipient addresses and reconcile receipts.
@@ -564,26 +577,26 @@ These requirements are integration-facing (middleware/SDK, request binding, and 
 
 #### Integration requirements (baseline)
 
-- **Server middleware / SDK** for common frameworks (e.g., Next.js, Express/Fastify, Go net/http):
+- **Server middleware / SDK** for common frameworks (e.g. Next.js, Express/Fastify, Go net/http):
   - Generate correct `402` responses with `paymentRequirements`.
   - Parse/validate `X-402-Payment` and call facilitator `/verify` (and `/settle` if required by the chosen flow).
   - Avoid leaking payment headers into logs by default (redaction utilities + safe examples).
-- **Request binding / replay safety (server/middleware)**: in the current EVM implementation of `exact` (EIP-3009), replay protection largely comes from the token contract refusing to accept the same authorization nonce twice *at settlement time*. However, that on-chain nonce check does **not** automatically give you “one payment unlocks exactly one HTTP request,” because the chain does not know your request semantics (method/path/body). If you need “one payment → one request,” the **resource server / middleware layer** must bind the payment/proof to request-specific context (e.g., a canonical `requestDigest` and/or per-request nonce) and enforce one-time use (a spent-store keyed by that binding).
+- **Request binding / replay safety (server/middleware)**: in the current EVM implementation of `exact` (EIP-3009), replay protection largely comes from the token contract refusing to accept the same authorization nonce twice *at settlement time*. However, that on-chain nonce check does **not** automatically give “one payment unlocks exactly one HTTP request,” because the chain does not know the request semantics (method/path/body). If “one payment → one request” is required, the **resource server / middleware layer** must bind the payment/proof to request-specific context (e.g. a canonical `requestDigest` and/or per-request nonce) and enforce one-time use (a spent-store keyed by that binding).
 - **Canonical request digest helper**:
   - Publish a single “request digest” algorithm so all integrators bind the same fields and don’t accidentally create replay vulnerabilities.
 - **Local dev/test harness**:
   - Mock facilitator + fixtures, including “pending then finalized” flows, so teams can test gating logic without standing up chain/ZK tooling locally.
 
-#### Option A: integration implications
+#### Option B: integration implications
 
-The baseline integration requirements still apply. Option A typically adds:
+The baseline integration requirements still apply. Option B typically adds:
 
 - **Aztec-specific developer ergonomics**: local/test tooling that can produce realistic “receipt artifacts” without requiring every developer to run full Aztec infra.
 - **Bridging-aware examples**: clear examples showing how to fund/spend/withdraw in the privacy domain without turning bridging events into accidental linkage via logs/telemetry.
 
-#### Option B: integration implications
+#### Option A: integration implications
 
-The baseline integration requirements still apply. Option B typically adds:
+The baseline integration requirements still apply. Option A typically adds:
 
 - **Relayer-friendly examples**: guidance on safe retries and failure handling when the broadcaster is not the payer.
 - **Stealth reconciliation docs (if pursued)**: patterns for providers to reconcile one-time recipients without creating correlatable identifiers in logs.
@@ -592,28 +605,28 @@ The baseline integration requirements still apply. Option B typically adds:
 
 This section proposes a phased plan for selecting a concrete privacy target and shipping incremental improvements while de-risking a deeper Aztec/Noir integration.
 
-### Phase 0: Define privacy target + key architecture decisions (must-do)
+### Phase 0: Define Privacy Target + Key Architecture Decisions
 
 Phase 0 checklist (answer these or explicitly mark them open before starting Phase 1/2):
 
 - **Privacy properties required**: payer? amount? usage patterns? See [Privacy Requirements](#privacy-requirements) and [Selective Disclosure](#selective-disclosure).
 - **Adversaries / threat model**: which adversaries matter most? See [Potential Adversaries](#potential-adversaries).
 - **UX constraints**: must work with existing EVM wallets? okay to bridge to Aztec?
-- **Option A (Aztec) viability for API gating latency**: can `/verify` stay fast enough? See Option A’s verification and feasibility notes.
+- **Option B (Aztec) viability for API gating latency**: can `/verify` stay fast enough? See Option B’s verification and feasibility notes.
 - **Facilitator strategy choice**: extend the existing facilitator or build a new one? Compare Strategy 1 vs Strategy 2 above (and the operational trade-offs each implies).
-- **Statefulness requirements**: what must be stateful (receipt tracking, indexing, key management)? Option A introduces hard statefulness; Option B can be lighter but still benefits from idempotency and basic receipt/tx tracking for retries and reconciliation.
-- **Language/tooling constraints**: what constraints exist for Aztec/Noir? See Option A’s [High-Level Architecture](#option-a-high-level-architecture).
+- **Statefulness requirements**: what must be stateful (receipt tracking, indexing, key management)? Option B introduces hard statefulness; Option A can be lighter but still benefits from idempotency and basic receipt/tx tracking for retries and reconciliation.
+- **Language/tooling constraints**: what constraints exist for Aztec/Noir? See Option B’s [High-Level Architecture](#option-b-high-level-architecture).
 
-### Phase 1: Deliver "medium privacy" on EVM (fast path)
+### Phase 1: Deliver "Weak-to-Medium Privacy" Facilitator for EVM Chains
 
 If the goal is near-term product value with reduced doxxing:
 
-- Add relayer support + stealth recipient options to the existing Go facilitator (Option B improvements)
+- Add relayer support + stealth recipient options to the existing Go facilitator (Option A improvements)
 - Harden operational privacy (log redaction, minimal retention, metadata discipline)
 - Keep the current `/verify` + `/settle` shape so integrations stay stable
-- This phase aligns with Strategy 1: extend the existing Go facilitator to ship Option B improvements, while Option A work proceeds independently
+- This phase aligns with Strategy 1: extend the existing Go facilitator to ship Option A improvements, while Option B work proceeds independently
 
-### Phase 2: Prototype Aztec/Noir receipt-based gating (research-to-prod bridge)
+### Phase 2: Prototype "Strong Privacy" Facilitator with Aztec/Noir
 
 Build a thin vertical slice:
 
@@ -623,7 +636,7 @@ Build a thin vertical slice:
 - Measure latency and failure modes under load
 - This phase aligns with Strategy 2: build the new, stateful privacy-preserving facilitator (Rust/TypeScript likely) independently from Phase 1 improvements
 
-Only after this phase do you decide whether Aztec is viable for a hosted facilitator offering.
+Only after this phase does the plan decide whether Aztec is viable for a hosted facilitator offering.
 
 ## References
 
