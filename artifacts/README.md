@@ -43,3 +43,7 @@ Use **[TEMPLATE](./TEMPLATE.md)** as the starting point for new research artifac
 7. **[ARTIFACT_07](./ARTIFACT_07.md)** - Privacy-Preserving Facilitator
 
    > *TODO: Add a short description of the artifact (and update title if necessary)*
+
+8. **[ARTIFACT_08](./ARTIFACT_08.md)** - x402 Product Sprint Deliverable
+
+   A summary of the "x402 Product Sprint" presented as a deliverable.
