@@ -189,7 +189,7 @@ Total HHI = 3,519 (HIGHLY CONCENTRATED)
 | 4 | **Daydreams** | 11.82M | $2.76M | 18,675 | 9,235 |
 | 5 | **Heurist** | 7.92M | $20.81K | 4,630 | 1,076 |
 
-*Data source: x402scan.com (All Time)*
+Data source: x402scan.com (All Time)
 
 ### Competitor #1: Coinbase (CDP x402 Facilitator)
 
@@ -279,7 +279,7 @@ Total HHI = 3,519 (HIGHLY CONCENTRATED)
 | **Company** | PayAI Network |
 | **Website** | payai.network |
 | **Documentation** | docs.payai.network |
-| **Type** | Open Source Infrastructure |
+| **Type** | Open-Source Infrastructure |
 | **Status** | Production (Strong) |
 | **Market Position** | #2 - 20.0% market share |
 
@@ -848,7 +848,7 @@ Total HHI = 3,519 (HIGHLY CONCENTRATED)
 | **Dashboard** | cohort10-next-x402-dashboard-psi.vercel.app |
 | **Facilitator** | cohort10-x402-go.vercel.app |
 | **Repository** | github.com/raid-guild/x402-facilitator-go |
-| **Type** | Open Source SaaS Facilitator |
+| **Type** | Open-Source SaaS Facilitator |
 | **Status** | Pre-launch / Beta |
 | **Market Position** | New entrant (0% market share) |
 
@@ -997,10 +997,10 @@ Unlike free facilitators controlled by others, Turnstile Pay gives you productio
 
 | Source | URL |
 |--------|-----|
-| x402scan | https://www.x402scan.com/facilitators |
-| Coinbase Docs | https://docs.cdp.coinbase.com/x402 |
-| PayAI Docs | https://docs.payai.network |
-| Dexter | https://dexter.cash/facilitator |
-| X402rs | https://x402.rs |
-| OpenX402 | https://open.x402.host |
-| AnySpend | https://docs.b3.fun/anyspend |
+| x402scan | [x402scan](https://www.x402scan.com/facilitators) |
+| Coinbase Docs | [Coinbase Docs](https://docs.cdp.coinbase.com/x402) |
+| PayAI Docs | [PayAI Docs](https://docs.payai.network) |
+| Dexter | [Dexter](https://dexter.cash/facilitator) |
+| X402rs | [X402rs](https://x402.rs) |
+| OpenX402 | [OpenX402](https://open.x402.host) |
+| AnySpend | [AnySpend](https://docs.b3.fun/anyspend) |
