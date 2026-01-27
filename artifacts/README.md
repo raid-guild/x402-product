@@ -26,7 +26,7 @@ Use **[TEMPLATE](./TEMPLATE.md)** as the starting point for new research artifac
 
 3. **[ARTIFACT_03](./ARTIFACT_03.md)** - Cost Structure & Rate Limiting Analysis
 
-   A research-backed analysis of x402 facilitator operating costs (gas/RPC/relayers), rate limiting and abuse prevention, transaction failure risks, and OFAC screening.
+   This document provides a research-backed analysis of x402 facilitator operating costs (gas/RPC/relayers), rate limiting and abuse prevention, transaction failure risks, and OFAC screening.
 
 4. **[ARTIFACT_04](./ARTIFACT_04.md)** - Multi-Network Deployment Analysis
 

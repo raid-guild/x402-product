@@ -1,14 +1,14 @@
 # Cost Structure & Rate Limiting Analysis
 
-- **Author(s)**: Rome (@powerfulRI)
+- **Author(s)**: Rome (@PowerfulRI)
 - **Editor(s)**: NA
-- **Date (created)**: 2026-01-15
+- **Date (created)**: 2026-01-27
 - **Date (updated)**: NA
 - **Sprint**: Cohort 11
 
 ## Short Description
 
-A research-backed analysis of x402 facilitator operating costs (gas/RPC/relayers), rate limiting and abuse prevention, transaction failure risks, and OFAC screening.
+This document provides a research-backed analysis of x402 facilitator operating costs (gas/RPC/relayers), rate limiting and abuse prevention, transaction failure risks, and OFAC screening.
 
 ## Table of Contents
 
