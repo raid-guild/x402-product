@@ -16,7 +16,7 @@ Use **[TEMPLATE](./TEMPLATE.md)** as the starting point for new research artifac
 
 ## Table of Contents
 
-1. **[ARTIFACT_01](./ARTIFACT_01.md)** - x402 Hackathon Summary
+1. **[ARTIFACT_01](./ARTIFACT_01.md)** - x402 Hackathon Participation
 
    Provides a summary of Cohort 10's participation in the x402 Hackathon, the hackathon results, and the collected feedback, and then analyzes the results and feedback.
 
