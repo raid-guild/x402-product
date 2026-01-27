@@ -66,7 +66,7 @@ x402 is an open, neutral standard for “internet-native payments” that uses H
 
 ### x402 Hackathon
 
-The x402 Hackathon was a virtual event running Dec 8, 2025 - Jan 5, 2026, focused on shipping with mentorship support. The hackathon did not advertise financial prizes; instead, winners received marketing/distribution support and potential grant opportunities. The requirement was that projects were built during the event window and submitted by the deadline ([x402 Hackathon](https://www.x402hackathon.com/)).
+The x402 Hackathon was a virtual event running Dec 8, 2025 - Jan 5, 2026, focused on shipping projects that make use of x402 with mentorship support. The hackathon did not advertise financial prizes; instead, winners would receive marketing/distribution support and potential grant opportunities. The requirement was that projects were built during the event window and submitted by the deadline and submissions would include a 2-minute demo video shared on social media ([x402 Hackathon](https://www.x402hackathon.com/)).
 
 ## Cohort 10 Projects
 
@@ -139,11 +139,11 @@ Cohort 10 submitted the following projects:
 
 ### Results & Feedback
 
-Winners were announced by the hackathon organizer on X ([x402 Hackathon Winners](https://x.com/austingriffith/status/2011108282648445294)). Based on the available summary captured during the cohort, the Cohort 10 submissions did not place.
+Winners were announced by the hackathon organizer on X ([x402 Hackathon Winners](https://x.com/austingriffith/status/2011108282648445294)). The Cohort's submissions did not place. Among the winners was another self-hosted faciliator but no other projects were offering a forkable hosting service.
 
-The core concept landed once the full picture was understood: a facilitator that supports API keys and can be forked/self-hosted. The main confusion was positioning—leading with “deploy your own facilitator” made the submission feel less differentiated since self-hosting is already possible in the x402 ecosystem.
+One of the cohort members reached out for feedback. The core concept landed with the judge/organizer once the full picture was understood: a facilitator that supports API keys and can be forked/self-hosted. The main confusion was positioning—leading with “deploy your own facilitator” made the submission feel less differentiated since self-hosting is already possible in the x402 ecosystem.
 
-The recommendation was to lead with the hosted offering (hosted facilitator + API-key purchase) as the primary value, with self-hosting positioned as an additional option. Suggested next steps included outreach to teams already using public facilitators and additional customer discovery conversations.
+The recommendation was to lead with the hosted offering (hosted facilitator + API-key purchase) as the primary value proposition, with self-hosting positioned as an additional "bonus" option. Suggested next steps included outreach to teams already using public facilitators and additional customer discovery conversations.
 
 ## Feedback Analysis
 
@@ -164,8 +164,8 @@ The recommendation was to lead with the hosted offering (hosted facilitator + AP
   - developers currently using public facilitators
   - teams building paid APIs / agentic tools that need low-friction billing
   - chains/partners evaluating a white-label facilitator
-- **Refine positioning and product narrative**: lead with **hosted facilitator + API-key purchase via x402**; position self-hosting as an optional “deploy your own” path
-- **Package the hosted-service experience**: align and harden the end-to-end flow (dashboard onboarding, key purchase, and documentation) for a production-ready experience
+- **Refine positioning and product narrative**: lead with **hosted facilitator + API-key purchase via x402** and position self-hosting as an optional “deploy your own” path (self-hosted faciliator and/or a monetized facilitator hosting service)
+- **Package the hosted-service experience**: align and harden the end-to-end flow (faciliator deployment, dashboard onboarding, API key purchase, and documentation) for a production-ready experience
 
 ## References
 
