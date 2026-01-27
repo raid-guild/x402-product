@@ -22,7 +22,7 @@ Use **[TEMPLATE](./TEMPLATE.md)** as the starting point for new research artifac
 
 2. **[ARTIFACT_02](./ARTIFACT_02.md)** - x402 Facilitator Competitor Analysis
 
-   A data-driven competitor analysis of the x402 facilitator market and Turnstile Pay’s positioning, concluding with actionable strategic recommendations.
+   This document provides a data-driven competitor analysis of the x402 facilitator market and product positioning, concluding with actionable strategic recommendations.
 
 3. **[ARTIFACT_03](./ARTIFACT_03.md)** - Cost Structure & Rate Limiting Strategy
 
