@@ -66,7 +66,7 @@ x402 is an open, neutral standard for “internet-native payments” that uses H
 
 ### x402 Hackathon
 
-The x402 Hackathon was a virtual event running Dec 8, 2025 - Jan 5, 2026, focused on shipping x402 projects with mentorship support. The hackathon did not advertise financial prizes; instead, winners receive marketing/distribution support and potential grant opportunities. Requirements were that projects were built during the event window, submitted by the deadline, and included a 2-minute demo video shared on social media ([x402 Hackathon](https://www.x402hackathon.com/)).
+The x402 Hackathon was a virtual event running from Dec 8, 2025 to Jan 5, 2026. The hackathon was focused on shipping x402 projects with mentorship support. The hackathon did not advertise financial prizes; instead, winners receive marketing/distribution support and potential grant opportunities. The participation requirements were that projects were built during the event window, submitted by the deadline, and included a 2-minute demo video shared on social media ([x402 Hackathon](https://www.x402hackathon.com/)).
 
 ## Cohort 10 Projects
 
@@ -139,11 +139,11 @@ Cohort 10 submitted the following projects:
 
 ### Results & Feedback
 
-Winners were announced by the hackathon organizer on X ([x402 Hackathon Winners](https://x.com/austingriffith/status/2011108282648445294)). Cohort 10 submissions did not place. A self-hosted facilitator was among the winners, but no other winning projects appeared to offer a forkable hosted facilitator service.
+Winners were announced on X by the hackathon organizer ([x402 Hackathon Winners](https://x.com/austingriffith/status/2011108282648445294)). Cohort 10 submissions did not place. Another self-hosted facilitator was among the winners but the API key management dashboard was a unique offering.
 
-The cohort reached out for feedback. The core concept landed with the judge/organizer once the full picture was understood: a facilitator that supports API keys and can be forked/self-hosted. The main confusion was positioning—leading with “deploy your own facilitator” made the submission feel less differentiated since self-hosting is already possible in the x402 ecosystem.
+The cohort reached out for feedback. The core concept landed with the judge once the full picture was understood: a facilitator that supports API keys and can be forked/self-hosted. The main confusion was positioning—leading with “deploy your own facilitator” made the submission feel less differentiated since self-hosting is already possible in the x402 ecosystem.
 
-The recommendation was to lead with the hosted offering (hosted facilitator + API-key purchase) as the primary value proposition, with self-hosting positioned as an additional "bonus" option. Suggested next steps included outreach to teams already using public facilitators and additional customer discovery conversations.
+The recommendation was to lead with the hosted offering (hosted facilitator + API-key management) as the primary value proposition, with self-hosting positioned as a "bonus" option. Suggested next steps included outreach to teams already using public facilitators and additional customer discovery conversations.
 
 ## Feedback Analysis
 
