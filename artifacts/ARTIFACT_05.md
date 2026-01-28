@@ -361,7 +361,7 @@ Vercel charges for usage beyond included limits:
 | **Origin Transfer** | 100 GB | $0.06/GB | Low |
 | **ISR Cache** | - | $0.40/M reads, $4.00/M writes | Low |
 
-*Compute includes Active CPU Time (varies by region, ~$0.128/hr) and Provisioned Memory (~$0.0106/GB-hour)*
+*Compute includes Active CPU Time (varies by region, ≈ $0.128/hr) and Provisioned Memory (≈ $0.0106/GB-hour)*
 
 ### Supabase Overage Costs
 
