@@ -97,7 +97,6 @@ the core product is a **managed x402 facilitator service** that performs two fun
 
 4. flexible branding/component system for easy customisation
 
-
 the facilitator exposes these capabilities via stable http endpoints and does not require customers to run blockchain nodes or manage private keys.
 
 ## 4. white-label model
@@ -124,13 +123,13 @@ this model is feasible because facilitator users care about **control and owners
 
    * api platforms
    * data services
-   * ai inference providers
+   * ai inference providers  
      these teams want usage-based billing without operating crypto payments internally.
 
 2. **l2 / l3 network operators**
 
    * rollups
-   * app-specific chains
+   * app-specific chains  
      they want a native payment primitive for their ecosystem without building one from scratch.
 
 3. **enterprise web3 teams**
@@ -255,7 +254,7 @@ there is no dominant product that combines:
 * managed infrastructure
 * true white-label deployment
 
-> One the was recently built is: {%preview https://www.openfacilitator.io/ %}
+> One that was recently built is [openfacilitator.io](https://www.openfacilitator.io/)
 
 adjacent products exist (relayers, gateways, payment processors), but they either:
 
