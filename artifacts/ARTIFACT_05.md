@@ -201,15 +201,15 @@ Each client may require a Supabase subscription for database, authentication, an
 | Usage Level | Database Storage | File Storage | Bandwidth | MAUs | Edge Functions | **Total/Month** |
 |-------------|------------------|--------------|-----------|------|----------------|-----------------|
 | Low | 8 GB (included) | 50 GB (included) | 100 GB (included) | 50K (included) | 500K (included) | **$25** |
-| Moderate | 20 GB (+$1.50) | 150 GB (+$1.05) | 500 GB (+$22.50) | 150K (+$162.50) | 3M (+$2.00) | **$212.05** |
+| Moderate | 20 GB (+$1.50) | 150 GB (+$1.05) | 500 GB (+$22.50) | 150K (+$162.50) | 3M (+$2.00) | **$214.55** |
 | High | 50 GB (+$5.25) | 300 GB (+$4.20) | 1.5 TB (+$112.50) | 500K (+$1,300) | 10M (+$16.00) | **$1,462.95** |
 
 **Multi-Subscription Scenarios** (10 clients, moderate usage per subscription):
 
 | Architecture | Subscriptions | Monthly Cost |
 |--------------|---------------|--------------|
-| **Per-Client** | 10 Supabase subscriptions | **$2,120.50** (10 × $212.05) |
-| **Shared** | 1 Supabase subscription | **$212.05** (usage accumulates across all clients) |
+| **Per-Client** | 10 Supabase subscriptions | **$2,145.50** (10 × $214.55) |
+| **Shared** | 1 Supabase subscription | **$214.55** (usage accumulates across all clients) |
 
 *Note: Shared subscription costs scale with combined usage across all clients.*
 
