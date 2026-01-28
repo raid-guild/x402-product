@@ -315,8 +315,8 @@ This section covers Raid Guild internal labor costs for standing up and operatin
 **Activities**: Account/project setup, domain/SSL, CI/CD, environment variables, monitoring, documentation, initial deployment, Supabase project setup and configuration
 
 **Time & Cost**:
-- Simple (shared deployment): 8-10 hours → $400-$1,000
-- Complex (per-client with automation): 12-16 hours → $600-$1,600
+- Simple (shared deployment): 6-8 hours → $300-$800
+- Complex (per-client with automation): 10-14 hours → $500-$1,400
 
 *Note: Costs are based on $50-$100/hour member rates.*
 
@@ -334,7 +334,7 @@ This section covers Raid Guild internal labor costs for standing up and operatin
 
 ### Cost Summary
 
-- Initial: $400-$1,600 (one-time)
+- Initial: $300-$1,400 (one-time)
 - Ongoing: Varies based on time required for management activities
 
 ## Pay-As-You-Use Breakdown
@@ -433,7 +433,7 @@ Infura and Alchemy are usage-metered managed RPC providers (used by Raid Guild t
 ### Combined Recommendations
 
 1. **Include All Costs**: Factor in Vercel + Supabase + RPC provider costs when pricing
-2. **Include Management Costs**: Initial setup ($500-$2,000) + ongoing ($150-$1,000/month) - factor into pricing
+2. **Include Management Costs**: Initial setup ($300-$1,400) + ongoing ($150-$1,000/month) - factor into pricing
 3. **Total Budget Planning** (Vercel + Supabase, shared architecture; add RPC costs separately based on usage):
    - **Low**: $45-100/month (Vercel $20-50 + Supabase $25-50)
    - **Moderate**: $300-800/month (Vercel $100-300 + Supabase $200-500)
