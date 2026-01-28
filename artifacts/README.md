@@ -24,9 +24,9 @@ Use **[TEMPLATE](./TEMPLATE.md)** as the starting point for new research artifac
 
    This document provides a data-driven competitor analysis of the x402 facilitator market and product positioning, concluding with actionable strategic recommendations.
 
-3. **[ARTIFACT_03](./ARTIFACT_03.md)** - Cost Structure & Rate Limiting Strategy
+3. **[ARTIFACT_03](./ARTIFACT_03.md)** - Cost Structure & Rate Limiting Analysis
 
-   > *TODO: Add a short description of the artifact (and update title if necessary)*
+   This document provides a research-backed analysis of x402 facilitator operating costs (gas/RPC/relayers), rate limiting and abuse prevention, transaction failure risks, and OFAC screening.
 
 4. **[ARTIFACT_04](./ARTIFACT_04.md)** - Multi-Network Deployment Analysis
 
