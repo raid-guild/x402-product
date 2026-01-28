@@ -138,9 +138,9 @@ Vercel pricing is organized into tiers (Hobby, Pro, Enterprise). The examples be
 
 | Architecture | Projects | Monthly Cost |
 |--------------|----------|--------------|
-| **Per-Client** | 10 dashboards + 10 facilitators (+ docs) | **$4,931** (20 Pro deployments, usage accumulates) |
-| **Shared Dashboard** | 1 dashboard + 10 facilitators (+ docs) | **$1,776** (11 Pro deployments) |
-| **Fully Shared** | 1 dashboard + 1 facilitator (+ docs) | **$195.60** (2 Pro deployments, usage shared) |
+| **Per-Client** | 10 dashboards + 10 facilitators (+ docs) | **$3,912.00** (20 × $195.60) |
+| **Shared Dashboard** | 1 dashboard + 10 facilitators (+ docs) | **$2,151.60** (11 × $195.60) |
+| **Fully Shared** | 1 dashboard + 1 facilitator (+ docs) | **$391.20** (2 × $195.60) |
 
 *Note: The $20/month “base cost” is **per developer seat**, not per deployment. A single Pro seat can cover multiple projects/deployments; additional cost comes from usage overages (data transfer, requests, compute).*
 
