@@ -31,6 +31,7 @@ This document provides a comprehensive infrastructure cost analysis including Ve
 - [Project Management Costs](#project-management-costs)
   - [Initial Setup](#initial-setup)
   - [Ongoing Management](#ongoing-management)
+  - [Cost Summary](#cost-summary)
 - [Pay-As-You-Use Breakdown](#pay-as-you-use-breakdown)
   - [Vercel Overage Costs](#vercel-overage-costs)
   - [Supabase Overage Costs](#supabase-overage-costs)
@@ -115,34 +116,24 @@ Vercel pricing is organized into tiers (Hobby, Pro, Enterprise). The examples be
 
 **Base Cost**: $20/month per developer seat
 
-**Included** ($20 credit applied):
-- 1 TB data transfer ($0.15/GB over)
-- 10M edge requests ($2.00/M over)
-- 1M function invocations ($0.60/M over)
-- 1,000 GB-hours compute ($0.18/GB-hour over)
-- Team collaboration, analytics, custom domains
+**Important Pricing Note**: Vercel Pro has **two** cost components:
+- **Developer Experience Platform** (DX Platform): the $20/month per paid seat fee
+- **Managed Infrastructure usage**: usage-based billing (Functions, data transfer, and other billable resources)
+
+**Vercel Functions pricing** (Fluid Compute):
+- **Active CPU**: billed per CPU-hour while your code is executing (billing pauses during I/O)
+- **Provisioned Memory**: billed per GB-hour for the lifetime of function instances (continues during I/O)
+- **Invocations**: billed per request; first 1M included, then $0.60 per million on Pro
+- **Regional pricing applies** (example US regions: $0.128 / CPU-hour and $0.0106 / GB-hour memory)
 
 **Optional Add-Ons**: SAML SSO ($300/mo), HIPAA BAA ($350/mo), Observability Plus ($10/mo), Web Analytics Plus ($10/mo), Speed Insights ($10/project/mo)
 
-**Example Costs** (single deployment of paid projects: dashboard + facilitator service):
+**Estimating monthly cost**:
+- **Seats**: \(paid seats × $20\)
+- **Functions**: invocations + (Active CPU time × regional rate) + (Provisioned Memory × regional rate)
+- **Other managed infrastructure**: varies by enabled products and usage
 
-| Traffic Level | Data Transfer | Edge Requests | Functions | Compute | **Total/Month** |
-|--------------|---------------|---------------|-----------|---------|-----------------|
-| Low | 50 GB (included) | 500K (included) | 100K (included) | 200 GB-hr (included) | **$20** |
-| Moderate | 1.5 TB (+$75) | 15M (+$10) | 2M (+$0.60) | 1,500 GB-hr (+$90) | **$195.60** |
-| High | 5 TB (+$600) | 50M (+$80) | 10M (+$5.40) | 5,000 GB-hr (+$720) | **$1,425.40** |
-
-*Note: Documentation costs are not included in these Pro examples (assumes free tier is sufficient for documentation).*
-
-**Multi-Deployment Scenarios** (10 clients, moderate traffic per deployment):
-
-| Architecture | Projects | Monthly Cost |
-|--------------|----------|--------------|
-| **Per-Client** | 10 dashboards + 10 facilitators (+ docs) | **$3,912.00** (20 × $195.60) |
-| **Shared Dashboard** | 1 dashboard + 10 facilitators (+ docs) | **$2,151.60** (11 × $195.60) |
-| **Fully Shared** | 1 dashboard + 1 facilitator (+ docs) | **$391.20** (2 × $195.60) |
-
-*Note: The $20/month “base cost” is **per developer seat**, not per deployment. A single Pro seat can cover multiple projects/deployments; additional cost comes from usage overages (data transfer, requests, compute).*
+*Note: Function compute cost depends on workload shape (CPU time, instance lifetime, and configured memory) and region.*
 
 ### Enterprise Tier
 
@@ -186,8 +177,8 @@ Each client may require a Supabase subscription for database, authentication, an
 
 **Included**:
 - 100,000 MAUs (additional at $0.00325 per MAU)
-- 8 GB database storage (additional at $0.125 per GB)
-- 100 GB file storage (additional at $0.021 per GB)
+- 8 GB database disk size per project (additional at $0.125 per GB-month on gp3)
+- 100 GB Supabase Storage (object/file storage) (additional at $0.021 per GB-month)
 - 250 GB bandwidth (additional at $0.09 per GB)
 - 2 million Edge Function invocations (additional at $2 per million)
 - Email support
@@ -208,8 +199,8 @@ Each client may require a Supabase subscription for database, authentication, an
 
 | Architecture | Subscriptions | Monthly Cost |
 |--------------|---------------|--------------|
-| **Per-Client** | 10 Supabase subscriptions | **$2,145.50** (10 × $214.55) |
-| **Shared** | 1 Supabase subscription | **$214.55** (usage accumulates across all clients) |
+| Per-Client | 10 Supabase subscriptions | **$2,145.50** (10 × $214.55) |
+| Shared | 1 Supabase subscription | **$214.55** (usage accumulates across all clients) |
 
 *Note: Shared subscription costs scale with combined usage across all clients.*
 
@@ -244,7 +235,7 @@ Each client may require a Supabase subscription for database, authentication, an
 
 **Benefits**: Volume discounts, consolidated billing, better cost predictability, enterprise-grade support
 
-**Suitable For**: Large-scale applications running at internet scale workloads
+**Suitable For**: Large-scale applications running at internet-scale workloads
 
 **Example Costs** (depending on scale):
 - Small (1-5 subscriptions): $1,000-$3,000/month
@@ -253,13 +244,13 @@ Each client may require a Supabase subscription for database, authentication, an
 
 ## RPC Provider Costs
 
-RPC providers provide blockchain node access (Ethereum + L2s/testnets, etc.) without running your own full node infrastructure. Costs are usually driven by **request complexity** (credits / compute units) and **throughput limits**.
+RPC providers provide blockchain node access (Ethereum + L2s/testnets, etc.) without running your own full node infrastructure. Costs are usually driven by request complexity (credits / compute units) and throughput limits.
 
 This section explores the existing providers used by the Raid Guild team: [Infura](https://infura.io/) and [Alchemy](https://dashboard.alchemyapi.io/).
 
 ### Infura
 
-Infura uses **credit-based pricing** with fixed daily credit quotas per plan. Each JSON-RPC method consumes a defined number of credits (e.g., `eth_call` = 80 credits, `eth_getLogs` = 255 credits).
+Infura uses credit-based pricing with fixed daily credit quotas per plan. Each JSON-RPC method consumes a defined number of credits (e.g., `eth_call` = 80 credits, `eth_getLogs` = 255 credits).
 
 **Plans** (new customers):
 - **Core (Free)**: 3,000,000 credits/day, 500 credits/second — **$0/month**
@@ -284,11 +275,11 @@ Infura uses **credit-based pricing** with fixed daily credit quotas per plan. Ea
 
 ### Alchemy
 
-Alchemy uses **Compute Units (CUs)** per API method, plus throughput measured in CU/s (CUPS). Each JSON-RPC method consumes a defined number of CUs (e.g., `eth_blockNumber` = 10 CU, `eth_call` = 26 CU, `eth_getLogs` = 60 CU).
+Alchemy uses Compute Units (CUs) per API method, plus throughput measured in CU/s (CUPS). Each JSON-RPC method consumes a defined number of CUs (e.g., `eth_blockNumber` = 10 CU, `eth_call` = 26 CU, `eth_getLogs` = 60 CU).
 
 **Plans**:
 - **Free**: 30,000,000 CU/month — **$0/month**
-- **Pay As You Go (PAYG)**: minimum **$5** (includes **11M CUs**), then usage priced:
+- **Pay As You Go** (PAYG): minimum **$5** (includes **11M CUs**), then usage priced:
   - **$0.45 per 1M CU** (up to 300M CU/month)
   - **$0.40 per 1M CU** (300M+ CU/month)
 - **Enterprise**: Custom pricing
@@ -312,56 +303,55 @@ Alchemy uses **Compute Units (CUs)** per API method, plus throughput measured in
 
 | Provider | Billing unit | Free tier | Paid starting point | Best for |
 |---------|--------------|-----------|---------------------|----------|
-| **Infura** | Credits (per request, varies by method) | 3M credits/day | $50/mo (Developer) | Predictable plan-based budgeting with daily quotas |
-| **Alchemy** | Compute Units (per request, varies by method) | 30M CU/month | PAYG ($5 min) | Smooth usage-based pricing + broader platform tooling |
+| Infura | Credits (per request, varies by method) | 3M credits/day | $50/mo (Developer) | Predictable plan-based budgeting with daily quotas |
+| Alchemy | Compute Units (per request, varies by method) | 30M CU/month | PAYG ($5 min) | Smooth usage-based pricing + broader platform tooling |
 
 ## Project Management Costs
 
-This section covers **Raid Guild internal labor costs** for standing up and operating the infrastructure (planning, setup, automation, monitoring, incident response, and ongoing coordination). Unlike the sections above (which compare **third-party platform/vendor pricing** like Vercel, Supabase, and RPC providers), these costs represent the time required to manage those platforms.
+This section covers Raid Guild internal labor costs for standing up and operating the infrastructure (planning, setup, automation, monitoring, incident response, and ongoing coordination). Unlike the sections above (which compare third-party platform/vendor pricing like Vercel, Supabase, and RPC providers), these costs represent the time required to manage those platforms.
 
 ### Initial Setup
 
 **Activities**: Account/project setup, domain/SSL, CI/CD, environment variables, monitoring, documentation, initial deployment, Supabase project setup and configuration
 
 **Time & Cost**:
-- Simple (shared deployment): 10-12 hours → $500-$1,200 (includes Supabase setup)
-- Complex (per-client with automation): 16-20 hours → $800-$2,000 (includes Supabase setup)
+- Simple (shared deployment): 8-10 hours → $400-$1,000
+- Complex (per-client with automation): 12-16 hours → $600-$1,600
 
 *Note: Costs are based on $50-$100/hour member rates.*
 
 ### Ongoing Management
 
-**Current State**: Raid Guild's Infrastructure Maestro role already exists and may be suitable for managing infrastructure.
+**Current State**: Raid Guild's Infrastructure Maestro role already exists and manages Vercel for other projects. This role can be extended to include Supabase management for this project.
 
 **Options**:
-1. **Extend Infrastructure Maestro**: Add Vercel and Supabase management (3-5 hrs/mo) → $150-$500/month
-2. **New Dedicated Role**: Separate Vercel/Supabase/platform management (5-10 hrs/mo) → $250-$1,000/month
+1. Extend Infrastructure Maestro: Add Supabase management to existing responsibilities
+2. New Dedicated Role: Separate Vercel/Supabase/platform management role
 
 **Management Activities**: Monitoring, env vars/secrets, deployments/rollbacks, config updates, usage optimization, coordination, documentation, Supabase database management, backup monitoring
 
 **Factors Affecting Time**: Deployment architecture (shared vs per-client), number of clients, deployment frequency, incident rate
 
-**Cost Summary**:
-- Initial: $500-$2,000 (one-time, includes Supabase setup)
-- Ongoing: $150-$1,000/month (includes Supabase management)
-- First Year Total: $2,300-$14,000 (depending on option chosen)
+### Cost Summary
+
+- Initial: $400-$1,600 (one-time)
+- Ongoing: Varies based on time required for management activities
 
 ## Pay-As-You-Use Breakdown
 
 ### Vercel Overage Costs
 
-Vercel charges for usage beyond included limits:
+Vercel charges for managed infrastructure usage (Functions, transfer, requests, etc.).
 
 | Resource | Included (Pro) | Overage Rate | Impact |
 |----------|----------------|--------------|--------|
-| **Data Transfer** | 1 TB | $0.15/GB | High (media-heavy sites) |
-| **Edge Requests** | 10M | $2.00/M | Moderate (scales with traffic) |
-| **Function Invocations** | 1M | $0.60/M | Low-Moderate (API usage) |
-| **Compute** | 1,000 GB-hours | $0.18/GB-hour | High (compute-intensive) |
-| **Origin Transfer** | 100 GB | $0.06/GB | Low |
-| **ISR Cache** | - | $0.40/M reads, $4.00/M writes | Low |
-
-*Compute includes Active CPU Time (varies by region, ≈ $0.128/hr) and Provisioned Memory (≈ $0.0106/GB-hour)*
+| Data Transfer | 1 TB | $0.15/GB | High (media-heavy sites) |
+| Edge Requests | 10M | $2.00/M | Moderate (scales with traffic) |
+| Function Invocations | 1M | $0.60/M | Low-Moderate (API usage) |
+| Functions Active CPU (Fluid Compute) | N/A | $0.128/CPU-hour (example US regions; varies by region) | High (CPU-bound workloads) |
+| Functions Provisioned Memory (Fluid Compute) | N/A | $0.0106/GB-hour (example US regions; varies by region) | Moderate-High (instance lifetime + memory size) |
+| Origin Transfer | 100 GB | $0.06/GB | Low |
+| ISR Cache | - | $0.40/M reads, $4.00/M writes | Low |
 
 ### Supabase Overage Costs
 
@@ -369,11 +359,11 @@ Supabase charges for usage beyond included limits (Pro Tier):
 
 | Resource | Included (Pro) | Overage Rate | Impact |
 |----------|----------------|--------------|--------|
-| **Database Storage** | 8 GB | $0.125/GB | Moderate (scales with data) |
-| **File Storage** | 100 GB | $0.021/GB | Low-Moderate (media files) |
-| **Bandwidth** | 250 GB | $0.09/GB | Moderate (API/data transfer) |
-| **MAUs** | 100,000 | $0.00325/MAU | High (scales with user count) |
-| **Edge Functions** | 2M invocations | $2.00/M | Low-Moderate (serverless functions) |
+| Database Disk Size | 8 GB | $0.125/GB-month (gp3) | Moderate (scales with data) |
+| File Storage | 100 GB | $0.021/GB | Low-Moderate (media files) |
+| Bandwidth | 250 GB | $0.09/GB | Moderate (API/data transfer) |
+| MAUs | 100,000 | $0.00325/MAU | High (scales with user count) |
+| Edge Functions | 2M invocations | $2.00/M | Low-Moderate (serverless functions) |
 
 *Compute add-ons available for additional database performance (scales up to 64 cores, 256 GB RAM)*
 
@@ -454,12 +444,14 @@ Infura and Alchemy are usage-metered managed RPC providers (used by Raid Guild t
 
 **Vercel**
 - [Vercel Pricing Page](https://vercel.com/pricing)
+- [Vercel Pricing Docs](https://vercel.com/docs/pricing)
 - [Vercel Functions Usage and Pricing](https://vercel.com/docs/functions/usage-and-pricing)
 - [Vercel Bandwidth Pricing](https://vercel.com/docs/platform/limits#bandwidth)
 
 **Supabase**
 - [Supabase Pricing Page](https://supabase.com/pricing)
 - [Supabase Documentation](https://supabase.com/docs)
+- [Supabase Disk Size Billing](https://supabase.com/docs/guides/platform/manage-your-usage/disk-size)
 
 **RPC Providers**
 - [Infura Pricing](https://www.infura.io/pricing)
