@@ -8,7 +8,7 @@
 
 ## Short Description
 
-Investigates whether deploying separate facilitator instances per network (e.g., Arbitrum, Optimism) is necessary and sustainable.
+This document investigates whether deploying separate facilitator instances per network (e.g. Arbitrum, Optimism) is necessary and sustainable.
 
 ## Table of Contents
 
