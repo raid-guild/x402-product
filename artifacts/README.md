@@ -32,11 +32,11 @@ Use **[TEMPLATE](./TEMPLATE.md)** as the starting point for new research artifac
 
    This document explores the case on the feasibility of building a white-label facilitator that can be packaged and maintained for select EVM L2/L3 chains.
 
-6. **[ARTIFACT_05](./ARTIFACT_05.md)** - Infrastructure Cost Analysis
+5. **[ARTIFACT_05](./ARTIFACT_05.md)** - Infrastructure Cost Analysis
 
    This document provides a comprehensive infrastructure cost analysis including Vercel (dashboard, facilitator, documentation), Supabase (database/auth/storage), RPC providers (Infura/Alchemy), and Raid Guild operational setup and maintenance.
 
-5. **[ARTIFACT_06](./ARTIFACT_06.md)** - Multi-Network Deployment Analysis
+6. **[ARTIFACT_06](./ARTIFACT_06.md)** - Multi-Network Deployment Analysis
 
    > *TODO: Add a short description of the artifact (and update title if necessary)*
 
