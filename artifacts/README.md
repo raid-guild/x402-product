@@ -38,7 +38,7 @@ Use **[TEMPLATE](./TEMPLATE.md)** as the starting point for new research artifac
 
 6. **[ARTIFACT_06](./ARTIFACT_06.md)** - Facilitator Deployment Strategy
 
-   This document investigates whether deploying separate facilitator instances per network (e.g. Arbitrum, Optimism) is necessary and sustainable.
+   This document investigates whether deploying separate facilitator instances per network is necessary and sustainable by evaluating deployment options and analyzing performance and security implications.
 
 7. **[ARTIFACT_07](./ARTIFACT_07.md)** - Privacy-Preserving Facilitator
 
