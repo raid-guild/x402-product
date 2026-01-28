@@ -279,8 +279,8 @@ Infura uses **credit-based pricing** with fixed daily credit quotas per plan. Ea
   - `eth_getLogs` (255 credits): ~294,117 calls/day
 
 **When to choose Infura**:
-- You want predictable monthly pricing via fixed quotas and clear rate limits.
-- Your workload maps cleanly to credit budgeting and you want to cap spend with a plan.
+- You want predictable monthly pricing via fixed quotas and clear rate limits
+- Your workload maps cleanly to credit budgeting and you want to cap spend with a plan
 
 ### Alchemy
 
@@ -305,8 +305,8 @@ Alchemy uses **Compute Units (CUs)** per API method, plus throughput measured in
 - 1B CU/month: \(300 × $0.45\) + \(700 × $0.40\) = **$415/month**
 
 **When to choose Alchemy**:
-- You prefer pay-for-usage economics and want to scale cost smoothly with demand.
-- You expect to leverage Alchemy’s enhanced APIs/tooling in addition to standard RPC.
+- You prefer pay-for-usage economics and want to scale cost smoothly with demand
+- You expect to leverage Alchemy’s enhanced APIs/tooling in addition to standard RPC
 
 ### Quick Comparison
 
@@ -404,18 +404,18 @@ Infura and Alchemy are usage-metered managed RPC providers (used by Raid Guild t
 
 ### RPC Optimization
 
-1. **Cache aggressively**: Cache common reads (block numbers, token metadata, config) and avoid refetching unchanged chain data.
-2. **Reduce expensive calls**: Minimize `eth_getLogs`/trace-style queries; prefer indexed event ingestion and targeted queries.
-3. **Batch and debounce**: Batch JSON-RPC; debounce UI polling; prefer subscriptions/webhooks over tight polling loops.
-4. **Instrument usage**: Track RPC method mix (credits/CUs) so you can optimize the highest-cost endpoints first.
-5. **Plan for limits**: Add retries/backoff and consider a secondary provider for resilience during rate limiting/outages.
+1. **Cache aggressively**: Cache common reads (block numbers, token metadata, config) and avoid refetching unchanged chain data
+2. **Reduce expensive calls**: Minimize `eth_getLogs`/trace-style queries; prefer indexed event ingestion and targeted queries
+3. **Batch and debounce**: Batch JSON-RPC; debounce UI polling; prefer subscriptions/webhooks over tight polling loops
+4. **Instrument usage**: Track RPC method mix (credits/CUs) so you can optimize the highest-cost endpoints first
+5. **Plan for limits**: Add retries/backoff and consider a secondary provider for resilience during rate limiting/outages
 
 ## Recommendations
 
 ### Vercel Recommendations
 
 1. **Start with Pro Tier**: $20/month base is reasonable; scales with usage
-2. **Model & Scaling**: Per-client deployments scale costs linearly; shared deployments keep costs more predictable.
+2. **Model & Scaling**: Per-client deployments scale costs linearly; shared deployments keep costs more predictable
 3. **Monitor Usage**: Set spending alerts (default $200 limit) to avoid surprises
 4. **Budget Planning**:
    - **Shared**: Low ($20-50), Moderate ($100-300), High ($500-2,000) per month
@@ -425,7 +425,7 @@ Infura and Alchemy are usage-metered managed RPC providers (used by Raid Guild t
 ### Supabase Recommendations
 
 1. **Start with Pro Tier**: $25/month base per subscription; scales with usage
-2. **Model & Scaling**: Prefer shared subscription unless isolation is required; per-client subscriptions scale costs linearly.
+2. **Model & Scaling**: Prefer shared subscription unless isolation is required; per-client subscriptions scale costs linearly
 3. **Monitor Usage**: Track database storage, bandwidth, and MAUs in Supabase dashboard
 4. **Budget Planning**:
    - **Shared Subscription**: Low ($25-50), Moderate ($200-500), High ($1,000-2,000) per month
@@ -434,11 +434,11 @@ Infura and Alchemy are usage-metered managed RPC providers (used by Raid Guild t
 
 ### RPC Provider Recommendations
 
-1. **Start with a single provider**: Use the current Raid Guild provider (Infura or Alchemy) and validate usage patterns early.
-2. **Model & Scaling**: Use separate provider apps/keys per client if you need per-client quotas, reporting, or blast-radius reduction.
-3. **Monitor Usage**: Track credit/CU burn and rate limiting; set alerts before you hit quota/throughput limits.
-4. **Budget Planning**: Treat RPC as usage-metered; plan thresholds for when to upgrade plans or add capacity based on real usage.
-5. **Resilience**: Consider a secondary provider/failover strategy if RPC availability is critical for uptime.
+1. **Start with a single provider**: Use the current Raid Guild provider (Infura or Alchemy) and validate usage patterns early
+2. **Model & Scaling**: Use separate provider apps/keys per client if you need per-client quotas, reporting, or blast-radius reduction
+3. **Monitor Usage**: Track credit/CU burn and rate limiting; set alerts before you hit quota/throughput limits
+4. **Budget Planning**: Treat RPC as usage-metered; plan thresholds for when to upgrade plans or add capacity based on real usage
+5. **Resilience**: Consider a secondary provider/failover strategy if RPC availability is critical for uptime
 
 ### Combined Recommendations
 
