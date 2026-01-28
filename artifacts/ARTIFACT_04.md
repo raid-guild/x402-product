@@ -1,14 +1,14 @@
 # White-Label Product Feasibility
 
-- **Author(s)**: Patrick (@sinachpat)
+- **Author(s)**: Patrick (@SinachPat)
 - **Editor(s)**: NA
-- **Date (created)**: 2026-01-14
+- **Date (created)**: 2026-01-28
 - **Date (updated)**: NA
 - **Sprint**: Cohort 11
 
 ## Short Description
 
-Explores the case on the feasibility of building a white-label facilitator that can be packaged and maintained for select EVM L2/L3 chains.
+This document explores the case on the feasibility of building a white-label facilitator that can be packaged and maintained for select EVM L2/L3 chains.
 
 ## Table of Contents
 

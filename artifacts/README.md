@@ -30,7 +30,7 @@ Use **[TEMPLATE](./TEMPLATE.md)** as the starting point for new research artifac
 
 4. **[ARTIFACT_04](./ARTIFACT_04.md)** - White-Label Product Feasibility
 
-   Explores the case on the feasibility of building a white-label facilitator that can be packaged and maintained for select EVM L2/L3 chains.
+   This document explores the case on the feasibility of building a white-label facilitator that can be packaged and maintained for select EVM L2/L3 chains.
 
 5. **[ARTIFACT_05](./ARTIFACT_05.md)** - Multi-Network Deployment Analysis
 
