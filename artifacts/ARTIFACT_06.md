@@ -229,7 +229,7 @@ The current facilitator implementation supports **only one private key for all c
 
 ### Private Key Management
 
-**Current Limitation: Single Private Key for All Networks**
+#### Current Limitation: Single Private Key for All Networks
 
 The current implementation uses one private key for accounts across all configured networks.
 
@@ -249,7 +249,7 @@ Following security best practices significantly reduces the risk impact:
 - **Low-to-Moderate Risk**: For internal/Raid Guild facilitator with proper key management practices and minimal fund balances
 - **Higher Risk**: For white-label clients requiring strict isolation or compliance with network-specific security policies
 
-**Consideration: Multiple Private Keys Per Network**
+#### Consideration: Multiple Private Keys Per Network
 
 Supporting multiple private keys (one per network) would provide:
 
