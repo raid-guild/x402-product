@@ -2,7 +2,7 @@
 
 - **Author(s)**: Ryan (@ryanchristo)
 - **Editor(s)**: NA
-- **Date (created)**: 2026-01-28
+- **Date (created)**: 2026-01-29
 - **Date (updated)**: NA
 - **Sprint**: Cohort 11
 
@@ -55,14 +55,14 @@ The facilitator service can be configured to support multiple EVM networks (e.g.
 
 The current facilitator implementation supports **only one private key for all configured networks** within a given deployment.
 
-- A single private key generates accounts across all supported networks
+- A single private key is used for accounts across multiple networks
 - All networks share the same key material and security boundary
 - Compromise of the private key affects all networks simultaneously
 
 ### Key Questions
 
 1. Is a single deployment supporting multiple networks sustainable from a performance perspective?
-2. What are the security implications of sharing a single private key across networks?
+2. What are the security implications of sharing a single private key across multiple networks?
 3. When should separate facilitator instances be deployed per network vs. per client?
 4. What operational concerns arise from multi-network deployments?
 
@@ -162,10 +162,10 @@ The current facilitator implementation supports **only one private key for all c
 - **Verification overhead**: Cryptographic verification scales linearly with request volume regardless of network count
 
 **Mitigation Strategies**:
-- Implement connection pooling and request queuing per network
-- Use async processing for settlement transactions
-- Cache network-specific configuration and contract addresses
 - Monitor per-network latency and throughput metrics
+- Use external caching for network-specific configuration
+- Implement async settlement processing if not already handled
+- Consider RPC provider rate limits and per-network request throttling
 
 ### Scalability Limits
 
@@ -239,7 +239,7 @@ Supporting multiple private keys (one per network) would provide:
 ### Account Management and Funding
 
 **Current Behavior**:
-- Single private key generates accounts on each network
+- Single private key is used for accounts on each network
 - Each network account requires separate funding for gas
 - Wallet balance monitoring must track balances across all networks
 
@@ -247,10 +247,10 @@ Supporting multiple private keys (one per network) would provide:
 - **Funding Complexity**: Must maintain adequate gas balances on each network
 - **Balance Monitoring**: Need to track balances across multiple networks
 - **Rebalancing**: May need to bridge funds between networks if balances become imbalanced
-- **Account Exposure**: More accounts holding funds increases attack surface (mitigated by minimal fund balances)
+- **Account Exposure**: More accounts holding funds increases attack surface
 
 **Best Practices**:
-- **Minimal Balances**: Maintain only the minimum funds needed for gas fees in dedicated facilitator accounts
+- **Minimal Balances**: Maintain minimum funds needed for gas fees in dedicated facilitator accounts
 - **As-Needed Funding**: Top up funds on an as-needed basis rather than maintaining large balances
 - **Automated Monitoring**: Automated balance monitoring and alerting per network
 - **Automated Funding**: Automated funding workflows with appropriate approval gates
@@ -296,7 +296,7 @@ Supporting multiple private keys (one per network) would provide:
 
 **Single Deployment**:
 - **Simpler**: One deployment to manage, update, and monitor
-- **Configuration**: Single configuration file/environment variables for all networks
+- **Configuration**: Single set of environment variables for all networks
 - **Updates**: Single deployment update affects all networks simultaneously
 - **Rollback**: Rollback affects all networks
 
@@ -352,7 +352,7 @@ Supporting multiple private keys (one per network) would provide:
 
 **Different Network Characteristics**:
 - Gas prices vary significantly between networks
-- Finality times differ (e.g. Base ~2 seconds, Polygon ~2 seconds, Arbitrum ~1-2 seconds)
+- Settlement finality times vary between networks
 - RPC provider reliability and rate limits vary
 - Network upgrades and forks occur independently
 
@@ -473,55 +473,55 @@ Supporting multiple private keys (one per network) would provide:
 ### Single Deployment, Multiple Networks
 
 **Pros**:
-- ✅ Lower infrastructure costs (single deployment)
-- ✅ Simplified operations and monitoring
-- ✅ Unified metrics and observability
-- ✅ Easier to maintain and update
-- ✅ Efficient resource utilization for moderate traffic
-- ✅ Single point of configuration management
+- Lower infrastructure costs (single deployment)
+- Simplified operations and monitoring
+- Unified metrics and observability
+- Easier to maintain and update
+- Efficient resource utilization for moderate traffic
+- Single point of configuration management
 
 **Cons**:
-- ❌ Single point of failure affects all networks
-- ❌ Shared rate limiting may impact networks unfairly
-- ❌ Current single private key limitation creates security risk (mitigated by best practices: minimal funds, dedicated accounts)
-- ❌ Cannot optimize per-network independently
-- ❌ Scaling affects all networks simultaneously
-- ❌ More complex to handle network-specific requirements
+- Single point of failure affects all networks
+- Shared rate limiting may impact networks unfairly
+- Current single private key limitation creates security risk (mitigated by best practices)
+- Cannot optimize per-network independently
+- Scaling affects all networks simultaneously
+- More complex to handle network-specific requirements
 
 ### Per-Network Deployments
 
 **Pros**:
-- ✅ Network-specific optimization and scaling
-- ✅ Isolated failures (one network doesn't affect others)
-- ✅ Independent rate limiting and performance tuning
-- ✅ Separate private keys per network (improved security isolation, but adds account management complexity)
-- ✅ Network-specific configuration and monitoring
-- ✅ Independent update and rollback cycles
+- Network-specific optimization and scaling
+- Isolated failures (one network doesn't affect others)
+- Independent rate limiting and performance tuning
+- Separate private keys per network (improved security isolation, but adds complexity)
+- Network-specific configuration and monitoring
+- Independent update and rollback cycles
 
 **Cons**:
-- ❌ Higher infrastructure costs (multiple deployments)
-- ❌ More complex operations and monitoring
-- ❌ Higher operational overhead
-- ❌ Multiple private keys add account management complexity (more accounts to monitor and fund)
-- ❌ Resource underutilization if traffic is uneven
-- ❌ More complex to maintain comprehensive view
+- Higher infrastructure costs (multiple deployments)
+- More complex operations and monitoring
+- Higher operational overhead
+- Multiple private keys add account management complexity (more accounts to monitor and fund)
+- Resource underutilization if traffic is uneven
+- More complex to maintain comprehensive view
 
 ### Per-Client Deployments
 
 **Pros**:
-- ✅ Complete client isolation
-- ✅ Custom branding and configuration
-- ✅ Client-specific security policies
-- ✅ Isolated incidents and failures
-- ✅ Compliance and audit requirements met
-- ✅ Independent scaling per client
+- Complete client isolation
+- Custom branding and configuration
+- Client-specific security policies
+- Isolated incidents and failures
+- Compliance and audit requirements met
+- Independent scaling per client
 
 **Cons**:
-- ❌ Highest infrastructure costs
-- ❌ Highest operational overhead
-- ❌ More complex client management
-- ❌ Resource duplication across clients
-- ❌ More deployments to monitor and maintain
+- Highest infrastructure costs
+- Highest operational overhead
+- More complex client management
+- Resource duplication across clients
+- More deployments to monitor and maintain
 
 ## Recommendations
 
@@ -557,7 +557,7 @@ Supporting multiple private keys (one per network) would provide:
    - Evaluate need based on compliance requirements, client needs, and risk assessment
    - If needed, enhance implementation to support network-specific private keys
    - Implement key-to-network mapping in configuration
-   - Consider operational complexity tradeoff: more keys = more accounts to manage and fund
+   - Consider operational complexity tradeoff (more accounts to manage and fund)
    - Provide migration tools from single-key to multi-key architecture
    - Update documentation and deployment guides
 
@@ -573,9 +573,10 @@ Supporting multiple private keys (one per network) would provide:
    - Network-specific funding thresholds and policies
 
 4. **Performance Optimization**
-   - Implement connection pooling per network
-   - Async processing for settlement transactions
-   - Network-specific caching strategies
+   - Monitor per-network latency and throughput metrics
+   - Use external caching for network-specific configuration
+   - Implement async settlement processing if not already handled
+   - Consider RPC provider rate limits and per-network request throttling
    - Performance testing and optimization per network
 
 ### Long-Term Recommendations (Strategic Decisions)
