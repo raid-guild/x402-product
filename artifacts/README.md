@@ -16,29 +16,29 @@ Use **[TEMPLATE](./TEMPLATE.md)** as the starting point for new research artifac
 
 ## Table of Contents
 
-1. **[ARTIFACT_01](./ARTIFACT_01.md)** - x402 Hackathon Feedback
+1. **[ARTIFACT_01](./ARTIFACT_01.md)** - x402 Hackathon Participation
 
-   > *TODO: Add a short description of the artifact (and update title if necessary)*
+   This document provides a summary of Cohort 10's participation in the x402 Hackathon, the hackathon results, and the collected feedback, and then analyzes the results and feedback.
 
-2. **[ARTIFACT_02](./ARTIFACT_02.md)** - Facilitator Market Research
+2. **[ARTIFACT_02](./ARTIFACT_02.md)** - x402 Facilitator Competitor Analysis
 
-   > *TODO: Add a short description of the artifact (and update title if necessary)*
+   This document provides a data-driven competitor analysis of the x402 facilitator market and product positioning, concluding with actionable strategic recommendations.
 
-3. **[ARTIFACT_03](./ARTIFACT_03.md)** - Cost Structure & Rate Limiting Strategy
+3. **[ARTIFACT_03](./ARTIFACT_03.md)** - Cost Structure & Rate Limiting Analysis
 
-   > *TODO: Add a short description of the artifact (and update title if necessary)*
+   This document provides a research-backed analysis of x402 facilitator operating costs (gas/RPC/relayers), rate limiting and abuse prevention, transaction failure risks, and OFAC screening.
 
-4. **[ARTIFACT_04](./ARTIFACT_04.md)** - Multi-Network Deployment Analysis
+4. **[ARTIFACT_04](./ARTIFACT_04.md)** - White-Label Product Feasibility
 
-   > *TODO: Add a short description of the artifact (and update title if necessary)*
+   This document explores the case on the feasibility of building a white-label facilitator that can be packaged and maintained for select EVM L2/L3 chains.
 
-5. **[ARTIFACT_05](./ARTIFACT_05.md)** - White-Label Product Feasibility
+5. **[ARTIFACT_05](./ARTIFACT_05.md)** - Infrastructure Cost Analysis
 
-   > *TODO: Add a short description of the artifact (and update title if necessary)*
+   This document provides a comprehensive infrastructure cost analysis including Vercel (dashboard, facilitator, documentation), Supabase (database/auth/storage), RPC providers (Infura/Alchemy), and Raid Guild operational setup and maintenance.
 
-6. **[ARTIFACT_06](./ARTIFACT_06.md)** - Infrastructure Cost Analysis
+6. **[ARTIFACT_06](./ARTIFACT_06.md)** - Facilitator Deployment Strategy
 
-   > *TODO: Add a short description of the artifact (and update title if necessary)*
+   This document investigates whether deploying separate facilitator instances per network is necessary and sustainable by evaluating deployment options and analyzing performance and security implications.
 
 7. **[ARTIFACT_07](./ARTIFACT_07.md)** - Privacy-Preserving x402 Facilitator
 
