@@ -36,9 +36,9 @@ Use **[TEMPLATE](./TEMPLATE.md)** as the starting point for new research artifac
 
    This document provides a comprehensive infrastructure cost analysis including Vercel (dashboard, facilitator, documentation), Supabase (database/auth/storage), RPC providers (Infura/Alchemy), and Raid Guild operational setup and maintenance.
 
-6. **[ARTIFACT_06](./ARTIFACT_06.md)** - Multi-Network Deployment Analysis
+6. **[ARTIFACT_06](./ARTIFACT_06.md)** - Facilitator Deployment Strategy
 
-   > *TODO: Add a short description of the artifact (and update title if necessary)*
+   This document investigates whether deploying separate facilitator instances per network is necessary and sustainable by evaluating deployment options and analyzing performance and security implications.
 
 7. **[ARTIFACT_07](./ARTIFACT_07.md)** - Privacy-Preserving Facilitator
 
