@@ -300,7 +300,7 @@ The facilitator must define the following; core technical requirements vary base
 
 #### A1) Relayer + stealth address settlement (medium privacy, medium complexity)
 
-- **Summary**: Relayer broadcast + stealth recipients to reduce direct payer attribution and recipient address reuse without changing the settlement domain.
+- **Summary**: Relayer broadcast + stealth recipients to reduce direct payer attribution and recipient address reuse.
 - **Mechanism**:
   - Relayers (payer does not broadcast)
   - Stealth recipient addresses (provider receives to one-time addresses)
@@ -326,9 +326,9 @@ The facilitator must define the following; core technical requirements vary base
 - **Trade-offs / limitations**:
   - Does not provide cryptographic privacy; only reduces casual linkage
 
-#### A2) "Deposit then spend" (prepaid credits) using a privacy pool (stronger privacy, higher complexity)
+#### A2) "Deposit then spend" (prepaid credits) using a privacy pool (medium-to-strong privacy, higher complexity)
 
-- **Summary**: Prepaid pool model where deposits are later spent to produce per-request receipts, improving payer unlinkability at higher complexity.
+- **Summary**: Prepaid pool model where deposits are later spent to produce per-request receipts.
 - **Mechanism**:
   - Deposit into a pool; later spend anonymously (nullifiers) to generate receipts for API calls
   - Can be built on EVM (ZK pool contract + off-chain proving) or on an L2 with better proving UX
@@ -353,9 +353,9 @@ The facilitator must define the following; core technical requirements vary base
 - **Trade-offs / limitations**:
   - UX friction (deposits, withdrawal timing, liquidity considerations)
 
-#### A2.2) Confidential transfers via confidentiality primitives (medium privacy, medium complexity)
+#### A2.2) Confidential transfers via confidentiality primitives (weak-to-medium privacy, medium complexity)
 
-- **Summary**: Confidential transfer primitives to hide payment metadata (amount/token) while keeping participant identities more visible.
+- **Summary**: Confidential transfer primitives to hide payment metadata (amount/token).
 - **Mechanism**:
   - Confidential token/transfer primitives (e.g. FHE-style "confidential tokens")
 - **Privacy impact**:
@@ -404,30 +404,30 @@ Option B candidate approaches (B1/B2/B3):
 
 ### Exact Flow and What Changes <a id="option-b-evm-exact-flow-and-what-changes"></a>
 
-The biggest change is **how a payment is authorized and verified**. In the current EVM "exact" flow, the client signs an **authorized transfer** (EIP-712 typed data + EIP-3009 signature), the API provider calls `/verify` to validate the authorization, and `/settle` to process the authorized transfer. In an Aztec/Noir design, the client produces (or helps produce) a transaction/proof, the API provider calls `/verify` to validate a verifier-friendly private receipt/proof, and `/settle` to coordinate submission/finality in the privacy domain. Changes vary by approach (B1/B2/B3) where noted.
+The biggest change is **how a payment is authorized and verified**. In the current EVM "exact" flow, the client signs an authorized transfer (EIP-712 typed data + EIP-3009 signature), the API provider calls `/verify` to validate the authorization, and `/settle` to process the authorized transfer. In an Aztec/Noir design, the client produces (or helps produce) a transaction/proof, the API provider calls `/verify` to validate a verifier-friendly private receipt/proof, and `/settle` to coordinate submission/finality.
 
 `paymentPayload` structure changes:
 
-- **B1**: authorization → privacy-domain transaction/proof; receipt → public output (receipt/claim) suitable for `/verify`
-- **B2**: authorization → privacy-domain transaction/proof; receipt → encrypted receipt note for provider; public commitment/inclusion evidence for facilitator
-- **B3**: authorization → privacy-domain transaction/proof; receipt format depends on inclusion-first vs proof-first (inclusion evidence vs verifier-friendly proof)
+- **B1**: authorization becomes privacy-domain transaction/proof; receipt is public output (receipt/claim)
+- **B2**: authorization becomes privacy-domain transaction/proof; receipt is encrypted note for the API provider and public commitment/inclusion evidence for the facilitator
+- **B3**: authorization becomes privacy-domain transaction/proof; receipt format depends on inclusion-first vs proof-first
 
 `paymentRequirements` structure changes:
 
-- **B1/B2/B3**: no structural change is required; extra structured data for Aztec/Noir should be carried via `extra` rather than changing the base object shape
+- **B1/B2/B3**: no structural change is required; extra structured data for Aztec/Noir could be carried via `extra`
 
 `/verify` processing changes:
 
-- **B1**: validate public receipt against `paymentRequirements` and anti-replay rules; select Aztec backend (node/prover/aggregator) and verification rules; proof/receipt format failures plus (potentially) "pending vs finalized" if finality is asynchronous
-- **B2**: validate public commitment/inclusion evidence; enforce one-time use semantics; select Aztec backend and verification rules; proof/receipt format failures plus (potentially) "pending vs finalized"
-- **B3**: **Inclusion-first**: gate on tx hash + inclusion/finality proof; select Aztec backend and verification rules. **Proof-first / soft-verify**: accept verifier-friendly proof/claim; reconcile inclusion/finality asynchronously; durable state and reconciliation for pending → finalized
+- **B1**: validate public receipt against anti-replay rules; select Aztec backend (node/prover/aggregator) and verification rules; handle proof/receipt format failures and "pending vs finalized" if finality is asynchronous
+- **B2**: validate public commitment/inclusion evidence; enforce one-time use semantics; select Aztec backend and verification rules; handle proof/receipt format failures and "pending vs finalized" if finality is asynchronous
+- **B3**: **Inclusion-first**: gate on transaction hash + inclusion/finality proof; select Aztec backend and verification rules. **Proof-first**: accept verifier-friendly proof/claim; reconcile inclusion/finality asynchronously; select Aztec backend and verification rules
 
 `/settle` processing changes:
 
-- **B1/B2/B3**: submit/coordinate the privacy-domain transaction/proof (and any bridging/relaying) and track finality; receipt production varies by approach below
-- **B1**: receipt → public receipt/claim evidence for re-verify
-- **B2**: receipt → commitment/inclusion evidence; provider note discovery for encrypted receipt
-- **B3**: receipt artifacts depend on inclusion-first vs proof-first; soft-verify requires durable state and reconciliation for pending → finalized
+- **B1/B2/B3**: submit/coordinate the privacy-domain transaction/proof (and any bridging/relaying) and track finality
+- **B1**: produce/record public receipt/claim evidence for re-verify
+- **B2**: produce/record commitment/inclusion evidence for facilitator; encrypted receipt for provider
+- **B3**: receipt artifacts depend on inclusion-first vs proof-first; track and reconcile pending through finalized
 
 ### Core Technical Requirements <a id="option-b-core-technical-requirements"></a>
 
@@ -435,26 +435,26 @@ The facilitator must define the following; core technical requirements vary base
 
 - **Paid definition + receipt/claim format**: define what "paid" means for a single API request (private transfer, private deposit, or a receipt/claim primitive) and the receipt artifacts the facilitator will accept.
   - **B1**: public output (receipt/claim) suitable for `/verify`; define receipt format and versioning
-  - **B2**: encrypted receipt note for provider; public commitment/inclusion evidence for facilitator; define note format and commitment scheme
+  - **B2**: encrypted receipt note for the provider; public commitment/inclusion evidence for the facilitator
   - **B3**: receipt format depends on inclusion-first vs proof-first; define evidence required for gating and for re-verify
 
 - **Request binding + anti-replay semantics**: ensure receipt artifacts are bound to request-specific context (e.g. a canonical request digest) and cannot be replayed (nullifier/unique spend semantics). Applies to all approaches (B1/B2/B3).
 
 - **Verification and finality strategy**: define what evidence `/verify` accepts for gating and how "pending vs finalized" states are represented when finality is asynchronous.
-  - **B1**: verifier-friendly public receipt; anti-replay rules; define pending/finalized if finality is async
-  - **B2**: public commitment/inclusion evidence; one-time use semantics; define pending/finalized and note discovery for provider reconciliation
+  - **B1**: verifier-friendly public receipt; anti-replay rules; define pending/finalized if finality is asynchronous
+  - **B2**: public commitment/inclusion evidence; one-time use semantics; define pending/finalized and note discovery
   - **B3**: **Inclusion-first**: gate on inclusion/finality proof; **Proof-first**: accept proof/claim, reconcile inclusion/finality asynchronously; define durable state and reconciliation for soft-verify
 
 - **Settlement responsibilities**: define what `/settle` does (submit/broadcast private tx if needed, confirm inclusion, and mark receipt/claim spent/consumed), including withdrawal and batching strategy if providers ultimately want funds on EVM. Applies to all approaches (B1/B2/B3); receipt production format varies by B1/B2/B3 (see Exact Flow and What Changes).
 
-- **Provider onboarding + key/custody model**: define how providers receive privately (recipient identifiers, onboarding storage) and whether custody is non-custodial vs managed. Applies to all approaches (B1/B2/B3); B2 adds note discovery/ownership semantics.
+- **Provider onboarding + key/custody model**: define how providers receive privately (recipient identifiers, onboarding storage) and whether custody is non-custodial vs managed. Applies to all approaches (B1/B2/B3).
 
 - **Indexing + reconciliation**: define what indexing is required to reconcile private receipts/commitments and what provider-facing reconciliation mechanism exists without exposing payer details.
   - **B1**: receipt format/versioning and reconciliation path for public receipts
-  - **B2**: note discovery, commitment-to-receipt mapping, provider reconciliation without leaking payer details; higher complexity than B1
-  - **B3**: reconciliation complexity depends on inclusion-first vs proof-first; soft-verify requires durable state and explicit reconciliation flows
+  - **B2**: note discovery, commitment-to-receipt mapping, provider reconciliation without leaking payer details
+  - **B3**: depends on inclusion-first vs proof-first; soft-verify requires durable state and explicit reconciliation flows
 
-- **Asset availability + bridging constraints**: ensure assets exist and are liquid in the privacy domain and define bridging/operational handling (liquidity, downtime, partial failures). Applies to all approaches (B1/B2/B3).
+- **Asset availability + bridging constraints**: ensure assets exist / are liquid in the privacy domain and define bridging/operational handling (liquidity, downtime, partial failures). Applies to all approaches (B1/B2/B3).
 
 ### Candidate Approaches <a id="option-b-candidate-approaches"></a>
 
@@ -488,12 +488,12 @@ The facilitator must define the following; core technical requirements vary base
 - **Trade-offs / limitations**:
   - Higher reconciliation complexity than B1; operational correctness depends on indexing and provider workflows
 
-#### B3) Inclusion-first vs proof-first verification (no additional privacy, higher complexity)
+#### B3) Inclusion-first vs proof-first verification (timing/finality trade-off, higher complexity)
 
 - **Summary**: The gating model can require inclusion/finality evidence before access (higher latency, stronger finality) or allow a soft-verify then finalize model (lower latency, requires durable state and reconciliation).
 - **Mechanism**:
   - **Inclusion-first**: `/verify` gates on a tx hash + inclusion/finality proof
-  - **Proof-first / soft-verify**: `/verify` accepts a verifier-friendly proof/claim and reconciles inclusion/finality asynchronously
+  - **Proof-first**: `/verify` accepts a verifier-friendly proof/claim and reconciles inclusion/finality asynchronously
 - **Privacy impact**:
   - Primarily affects timing/latency and reconciliation patterns rather than core cryptographic privacy
   - Different timing models can create distinct metadata patterns unless operational controls are applied
@@ -509,11 +509,11 @@ After evaluating Option A (EVM Improvements) and Option B (Aztec + Noir), a key 
 
 ### Strategy 1: Extend Existing Go Facilitator
 
-Extend the existing Go facilitator to deliver near-term privacy improvements while staying EVM-native (Option A), and keep the API-facing contract stable (`/verify`, `/settle`, auth, operational controls).
+Extend the existing Go facilitator to deliver near-term privacy improvements while staying EVM-native (Option A), and keep the API relatively stable (`/verify`, `/settle`, auth, operational controls).
 
 **Pros**:
 - Reuses existing production surface area (auth, request parsing, operational controls)
-- Keeps the existing integration story stable and can stay close to the current deployment model (serverless or lightly stateful/hybrid)
+- Keeps the existing integration story stable and can stay closer to the current deployment model
 - Lower time-to-ship for "medium privacy" improvements (relayers, stealth recipients, network privacy hygiene)
 
 **Cons**:
@@ -522,17 +522,12 @@ Extend the existing Go facilitator to deliver near-term privacy improvements whi
 
 ### Strategy 2: Build New Privacy-Preserving Facilitator
 
-Build a new, stateful facilitator optimized for Aztec/Noir (Option B). Keep the existing Go facilitator focused on EVM settlement (baseline + Option A improvements).
-
-In practice this usually looks like:
-
-- **Existing facilitator (Go)**: continues to serve EVM settlement and can adopt Option A improvements
-- **New facilitator (Rust/TypeScript likely)**: owns Option B (Aztec/Noir) receipt verification, indexing, state transitions, key/bridging coordination
+Build a new facilitator optimized for Aztec/Noir (Option B). Keep the existing Go facilitator focused on EVM settlement (baseline + Option A improvements) and add an additional facilitator focused on providing strong privacy guarantees.
 
 **Pros**:
-- Each facilitator can be optimized for its requirements (serverless vs stateful, Go vs Rust/TypeScript)
 - Independent scaling, deployment, and operational models
 - Clear separation of concerns and maintenance boundaries
+- Each facilitator can be optimized for its requirements (serverless vs stateful, Go vs Rust/TypeScript)
 - Lower risk: Option A improvements can be deployed without blocking on Aztec research/prototyping
 
 **Cons**:
@@ -543,25 +538,22 @@ In practice this usually looks like:
 
 ### Baseline Requirements
 
-These requirements are **cross-cutting** (apply to both Option A and Option B). They matter because privacy-oriented flows often introduce retries and asynchronous confirmation/finality, and production behavior will be unreliable without a minimal reliability baseline:
+This baseline requirement applies to both Option A and Option B. It is important because privacy-oriented flows often introduce retries and asynchronous confirmation/finality, and production behavior will be unreliable without a minimal reliability baseline.
 
-- **Receipt state tracking**: maintain a durable mapping of an idempotency key (e.g. `requestDigest`, or another stable request/payment binding) ↔ receipt/tx (e.g. tx hash, receipt ID) and explicit states for retries, reconciliation, and audits (often `pending -> finalized -> settled`).
-- **Idempotency**: make `/verify` and `/settle` safely retryable using an idempotency key (e.g. `requestDigest`, or another stable request/payment binding) so repeated calls do not double-submit or produce inconsistent outcomes.
+- **Receipt state tracking and idempotency**: maintain a durable mapping from an idempotency key (e.g. a request digest or another stable request/payment binding) to the receipt/tx (e.g. tx hash, receipt ID) and its state (e.g. pending → finalized → settled), for retries, reconciliation, and audits, so that `/verify` and `/settle` are safely retryable and repeated calls do not double-submit or produce inconsistent outcomes.
 
 ### Operation Requirements
 
-These requirements are **cross-cutting** (apply regardless of whether settlement uses the current EVM implementation of `exact` (EIP-3009) or a privacy-preserving approach). They matter because privacy failures often happen via **observability and abuse paths**, not the cryptographic scheme itself.
+These operation requirements apply to both Option A and Option B. They are important because many privacy failures often happen via **observability and abuse paths**, not the cryptographic scheme itself.
 
 #### Authentication, blast radius, and abuse controls
 
-- Auth exists via `X-API-Key` (static key or DB-backed lookup) (see `x402-facilitator-go/auth/auth.go`).
-- The current facilitator does not provide per-org/per-key rate limiting.
-- Privacy tends to reduce attribution, so hosted deployments should treat rate limits and basic anomaly/replay detection as first-class requirements.
+- The current facilitator does not provide per-organization/per-API-key rate limiting. Privacy tends to reduce attribution, so hosted deployments should treat rate limits and basic anomaly/replay detection as first-class requirements.
 
 #### Logging, telemetry, and infrastructure capture
 
-- Logging is minimal (mostly internal errors), but platform/infra logs may still capture request bodies/headers unless explicitly configured.
-- Make redaction + safe logging patterns an explicit requirement so deployments don’t accidentally log `X-402-Payment` artifacts (or correlatable request IDs).
+- Logging is minimal, but platform/infrastructure logs may still capture request bodies/headers unless explicitly configured.
+- Make redaction + safe logging patterns an explicit requirement so deployments don’t accidentally log payment metadata.
 
 ### Dashboard Requirements
 
@@ -569,17 +561,24 @@ These requirements are dashboard-facing (onboarding, UX states, and product cont
 
 #### Dashboard Requirements (Baseline)
 
-- **Scheme/network extensibility**: support multiple schemes/networks (EVM exact + future privacy schemes).
-- **Provider onboarding**: configure recipient identity per scheme (EVM address; Aztec identifier for B; stealth/prepaid for A if pursued).
-- **Lifecycle states**: handle `pending`, `finalized`, retries, reconciliation (not just paid/not paid).
+- **Scheme/network extensibility**: support multiple schemes/networks (EVM exact + future privacy schemes)
+- **Provider onboarding**: configure recipient identity per scheme (EVM address; Aztec identifier for B; stealth/prepaid for A)
+- **Lifecycle states**: handle `pending`, `finalized`, retries, reconciliation (not just paid/not paid)
 
 #### Dashboard Requirements (Option A)
 
-Baseline applies. Option A adds: relayer-aware payment UX (opt-in to relayed broadcasts; show latency, failure, fee trade-offs); stealth recipient onboarding (if pursued): one-time address derivation and receipt reconciliation; prepaid credits (if pursued): deposits, balance, spend receipts as source of truth.
+In addition to the baseline requirements:
+
+- **Relayer-aware payment UX**: opt-in to relayed broadcasts; show latency, failure, and fee trade-offs
+- **Stealth recipient onboarding (if pursued)**: one-time address derivation and receipt reconciliation
+- **Prepaid credits (if pursued)**: deposits, balance, and spend receipts as source of truth
 
 #### Dashboard Requirements (Option B)
 
-Baseline applies. Current dashboard is EVM/EIP-3009–coupled. Option B adds: Aztec recipient onboarding (receiving identifier per org; key type depends on custody model); client payment construction (Aztec private payment + verifier-friendly receipt, Aztec wallet or hosted agent, bridging/funding UX if needed); async finality UX (soft-verified vs finalized, especially if gating on pending).
+In addition to the baseline requirements:
+
+- **Aztec recipient onboarding**: configure receiving identifier per organization; key type depends on custody model
+- **Async finality UX**: surface soft-verified vs finalized states to admins; especially relevant if gating on pending receipts
 
 ### Integration Requirements
 
@@ -587,22 +586,29 @@ These requirements are integration-facing (middleware/SDK, request binding, and 
 
 #### Integration Requirements (Baseline)
 
-- **Middleware/SDK**: `402` + `paymentRequirements`; parse/validate `X-402-Payment`, call `/verify` and `/settle`; redact payment headers in logs by default.
-- **Request binding / replay safety**: "One payment → one request" requires binding payment to request context (canonical `requestDigest` or per-request nonce) and a spent-store; the chain nonce alone does not enforce it.
-- **Canonical request digest**: publish one algorithm so integrators bind the same fields and avoid replay bugs.
-- **Local dev/test harness**: mock facilitator + pending→finalized fixtures for gating tests without chain/ZK.
+- **Middleware/SDK**: custom middleware may be required; return payment requirements when access is gated; parse and validate payment payloads; call the facilitator to verify and settle; avoid logging payment headers by default
+- **Request binding / replay safety**: to enforce "one payment unlocks one request," bind each payment to the specific request (e.g. method, path, body) and record when it has been spent (relying only on the chain or token contract does not guarantee this)
+- **Canonical request digest**: publish a standard way to derive a request identifier so all integrators use the same binding
+- **Local dev/test tooling**: provide mocks and example flows so teams can test gating without running infrastructure
 
 #### Integration Requirements (Option A)
 
-Baseline applies. Adds: relayer-friendly examples (retries, failure when broadcaster ≠ payer); stealth reconciliation docs (if pursued).
+In addition to the baseline requirements:
+
+- **Relayer-friendly examples**: safe retries and failure handling when the broadcaster is not the payer
+- **Stealth reconciliation docs (if pursued)**: patterns for providers to reconcile one-time recipients
+- **Prepaid/pool integration (if pursued)**: examples for deposit, balance, and spend-receipt flows
 
 #### Integration Requirements (Option B)
 
-Baseline applies. Adds: local/test tooling for receipt artifacts without full Aztec; bridging examples (fund/spend/withdraw without linkage via logs).
+In addition to the baseline requirements:
+
+- **Client payment construction**: clients need either an Aztec-compatible wallet or a hosted payment flow; if assets live on another chain, provide clear UX for bridging or funding into the privacy domain before paying
+- **Developer tooling**: local/test tooling for receipt artifacts; bridging examples
 
 ## Recommendations
 
-This section proposes a phased plan for selecting a concrete privacy target and shipping incremental improvements while de-risking a deeper Aztec/Noir integration.
+This section proposes a phased plan for selecting a concrete privacy target and shipping incremental improvements while de-risking a deeper privacy layer (Aztec/Noir) integration.
 
 ### Phase 0: Define Privacy Target + Key Architecture Decisions
 
