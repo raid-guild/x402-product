@@ -40,6 +40,6 @@ Use **[TEMPLATE](./TEMPLATE.md)** as the starting point for new research artifac
 
    This document investigates whether deploying separate facilitator instances per network is necessary and sustainable by evaluating deployment options and analyzing performance and security implications.
 
-7. **[ARTIFACT_07](./ARTIFACT_07.md)** - Privacy-Preserving Facilitator
+7. **[ARTIFACT_07](./ARTIFACT_07.md)** - Privacy-Preserving x402 Facilitator
 
-   > *TODO: Add a short description of the artifact (and update title if necessary)*
+   This document assesses the technical requirements and viability of developing a privacy-preserving x402 facilitator, comparing EVM-native privacy improvements with more advanced integrations using privacy layers for shielded payments.
