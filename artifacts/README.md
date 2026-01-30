@@ -42,4 +42,4 @@ Use **[TEMPLATE](./TEMPLATE.md)** as the starting point for new research artifac
 
 7. **[ARTIFACT_07](./ARTIFACT_07.md)** - Privacy-Preserving x402 Facilitator
 
-   Assess the technical requirements and viability of developing a privacy-preserving x402 facilitator, comparing EVM-native privacy improvements with more advanced integrations with privacy layers for shielded payments.
+   This document assesses the technical requirements and viability of developing a privacy-preserving x402 facilitator, comparing EVM-native privacy improvements with more advanced integrations using privacy layers for shielded payments.
