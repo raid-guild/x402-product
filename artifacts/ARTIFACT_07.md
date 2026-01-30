@@ -647,22 +647,23 @@ Answer each or explicitly mark open before proceeding:
 
 If the primary goal is near-term product value:
 
-- Add relayer support + stealth recipient options to the existing Go facilitator (Option A improvements)
+- Add relayer support + stealth recipient options to the existing Go facilitator
 - Harden operational privacy (log redaction, minimal retention, metadata discipline)
 - Keep the current `/verify` + `/settle` shape so integrations stay stable
-- This phase aligns with Strategy 1: extend the existing Go facilitator to ship Option A improvements, while Option B work proceeds independently
+
+This phase aligns with Strategy 1: extend the existing Go facilitator to ship EVM improvements (Option A).
 
 ### Phase 2: Prototype "Strong Privacy" Facilitator with Aztec/Noir
 
 If the primary goal is stronger privacy guarantees:
 
 - Define an x402-like `paymentRequirements` variant for Aztec
+- Define an x402-like `paymentPayload` variant for Aztec
 - Implement a Noir/Aztec private payment that emits a receipt
-- Implement `/verify` against that receipt (and decide inclusion vs proof)
+- Implement `/verify` to validate that receipt; decide inclusion-first vs proof-first
 - Measure latency and failure modes under load
-- This phase aligns with Strategy 2: build the new, stateful privacy-preserving facilitator (Rust/TypeScript likely) independently from Phase 1 improvements
 
-Only after completing this phase will there be enough evidence (latency, failure modes, integration effort) to decide whether Aztec is viable for a hosted facilitator offering.
+This phase aligns with Strategy 2: build a new, stateful privacy-preserving facilitator using Rust or TypeScript (Option B). Only after completing this phase will there be enough evidence to decide whether Aztec is viable for a hosted facilitator offering.
 
 ## References
 
