@@ -17,8 +17,8 @@ This document provides a summary of the x402 Product Sprint presented as a deliv
 - [Background and Scope](#background-and-scope)
 - [Summary of Work](#summary-of-work)
 - [Key Sprint Outcomes](#key-sprint-outcomes)
-- [Positioning Options Considered](#positioning-options-considered)
-- [Customer Discovery Strategy](#customer-discovery-strategy)
+- [Positioning Options](#positioning-options)
+- [Customer Discovery](#customer-discovery)
 - [Recommendations](#recommendations)
 - [References](#references)
 
@@ -81,7 +81,7 @@ At the end of the Cohort 11 kickoff week (Friday, January 9th), we aligned on tw
 
 At the start of the following week (Monday, January 12th), those of us who were interested (Patrick, Rome, and myself) met to discuss a list of action items that were generated from the notes of the kickoff call, which we discussed and distributed among ourselves. We set priorities for each action item and self-assigned deadlines to draft research artifacts that we could share and discuss the following week. We decided to use HackMD for the first drafts but also discussed the use of GitHub to make them more accessible.
 
-We asynchronously shared our initial drafts and commented on each other's work. The results of the hackathon were announced, and unfortunately our submissions were not included among the winning projects. One of the action items included collecting and analyzing feedback from the hackathon, which Rome took the lead on collecting and sharing with the team. For the most part, the hackathon feedback reiterated the work that we were doing: clarifying our value proposition and doing more product/market research.
+We asynchronously shared our initial drafts and commented on each other's work. The results of the hackathon were announced, and our submissions were not included among the winning projects. One of the action items included collecting and analyzing feedback from the hackathon, which Rome took the lead on collecting and sharing with the team. For the most part, the hackathon feedback reiterated the work that we were doing: clarifying our value proposition and doing more product/market research.
 
 We met again on Monday, January 19th to check in and discuss next steps. The discussion was focused on one of our original goals: draft a proposal (Raid Guild Improvement Proposal) informed by our product/market research that would outline next steps for the x402 facilitator and dashboard. The proposal would include work that cohort graduates could participate in to take their next steps to becoming official Raid Guild members. We discussed our proposal strategy, determining that we should take an iterative approach, consider multiple proposals that are smaller rather than trying to write one large proposal. We also discussed the possibility of a first proposal being focused on a customer discovery campaign (learning from potential customers if a white-label service and/or stronger privacy guarantees are of interest), and then future proposals could be drafted based on the results. We also discussed our progress on producing research artifacts and setting up a GitHub repository that would become the container for our completed artifacts (which was then created following the call alongside draft pull requests for each of our research artifacts).
 
@@ -89,7 +89,7 @@ We briefly met again on Wednesday, January 21st and shared our progress with Dek
 
 Our final meeting for the sprint was on Monday, January 26th. We continued our previous discussion on our work being viewed as a "service" rather than a "product" alongside how we should present our work to Raid Guild members and the importance of getting their feedback. We discussed the possibility of presenting our work as a "case study" and producing a summarizing document that could be presented as a consultant-styled deliverable. We also discussed demo day as the most appropriate first opportunity to share our work with Raid Guild members and how we may need to consider scheduling a separate followup call if there is a low turnout.
 
-In the final week, Patrick focused on refining campaign briefs and writing one or two proposals for the customer discovery campaign(s), Rome focused on following up with our first potential client who she connected with on LinkedIn and then met with another Raid Guild community member to discuss business development, and I (Ryan) focused on the final push to consolidate and complete the research artifacts and to draft a document that summarizes the work we did that could be repurposed as a case study and/or deliverable.
+In the final week, Patrick focused on refining campaign briefs and writing a proposal for the customer discovery campaign(s), Rome met with our first potential client that reached out to her on LinkedIn and then met with another Raid Guild community member to discuss business development, and I (Ryan) focused on the final push to consolidate and complete the artifacts and to produce a document that summarizes the work we completed for the sprint that could then be repurposed as a case study and/or deliverable.
 
 ## Key Sprint Outcomes
 
@@ -108,7 +108,7 @@ In the final week, Patrick focused on refining campaign briefs and writing one o
   - **Customer discovery campaign: white-label service offering** ([`proposal 1`](../proposals/PROPOSAL_01.md) — planned/in-progress)
   - **Customer discovery campaign: privacy-preserving facilitator offering** ([`proposal 2`](../proposals/PROPOSAL_02.md) — planned/in-progress)
 
-## Positioning Options Considered
+## Positioning Options
 
 The sprint surfaced three plausible frames for “what this is”:
 - **Refined product development process**: a repeatable methodology Raid Guild can use to move from exploration → packaging → validated next steps (including how we run discovery and turn research into proposals).
@@ -130,7 +130,7 @@ The sprint surfaced three plausible frames for “what this is”:
   - Draft proposals as example recommendation outputs ([`proposal 1`](../proposals/PROPOSAL_01.md), [`proposal 2`](../proposals/PROPOSAL_02.md) — planned/in-progress)
   - Sprint process documentation (this artifact)
 
-## Customer Discovery Strategy
+## Customer Discovery
 
 Before we invest in production readiness or a full deployment, we need to learn whether we're solving a problem customers actually have, who would pay for and use a white-label facilitator service or a privacy-preserving facilitator, and under what conditions.
 
@@ -155,7 +155,7 @@ Discovery should validate or deepen the hypotheses raised in the research. Each 
 ## Recommendations
 
 - **Present the work to Raid Guild members and request feedback**: share this deliverable (and the repository artifacts) to validate the process, stress-test the positioning options, and gather recommendations for next steps before investing further.
-- **Run a focused discovery campaign before scoping further engineering work**: execute interviews and synthesis to decide which positioning option to adopt, using the hypotheses and references in the [Customer Discovery Strategy](#customer-discovery-strategy) section above.
+- **Run a focused discovery campaign before scoping further engineering work**: execute interviews and synthesis to decide which positioning option to adopt, using the hypotheses and references in the [Customer Discovery](#customer-discovery) section above.
 - **Prototype the offer, not the product**: draft an outline of white-label service packages with scope, pricing assumptions, and success metrics, drawing on cost and rate-limit constraints ([`artifact 3`](./ARTIFACT_03.md)), target segments and pricing ([`artifact 4`](./ARTIFACT_04.md)), and infrastructure/deployment assumptions ([`artifact 5`](./ARTIFACT_05.md), [`artifact 6`](./ARTIFACT_06.md)).
 - **Define guardrails early**: decide on rate limiting, abuse prevention, and cost containment principles that would apply to both the Raid Guild deployment and any white-label deployments (see [`artifact 3`](./ARTIFACT_03.md)).
 - **Treat privacy as a validated roadmap branch**: only elevate “privacy-preserving” to top-level positioning if discovery indicates strong demand; otherwise keep it as a longer-horizon differentiator (see [`artifact 7`](./ARTIFACT_07.md)).
