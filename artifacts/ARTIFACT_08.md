@@ -24,7 +24,7 @@ This document provides a summary of the x402 Product Sprint presented as a deliv
 
 ## Executive Summary
 
-The "x402 Product Sprint" was an initiative pursued in Cohort 11. The initiative was focused on product research and development for the x402 facilitator and dashboard built for the x402 Hackathon in the previous cohort (Cohort 10). This document acts as a deliverable that can function as both a **case study** and a **consultant-style report** for Raid Guild. Throughout the sprint, we reviewed feedback from the hackathon, conducted product/market research, produced research artificats, compiled work into a single repository, and explored the core open question: **how should the work be positioned for real clients and future internal investment?**
+The "x402 Product Sprint" was an initiative pursued in Cohort 11. The initiative was focused on product research and development for the x402 facilitator and dashboard built for the x402 Hackathon in the previous cohort (Cohort 10). This document acts as a deliverable that can function as both a **case study** and a **consultant-style report** for Raid Guild. Throughout the sprint, we reviewed feedback from the hackathon, conducted product/market research, produced research artifacts, compiled work into a single repository, and explored the core open question: **how should the work be positioned for real clients and future internal investment?**
 
 Key takeaways:
 - **We moved from prototype-building to packaging**: we documented what was built in the previous cohort (Cohort 10), why it was built, and what we learned so the work can be communicated clearly (internally and externally).
@@ -60,7 +60,7 @@ Cohort 10 submitted two entries to the x402 Hackathon (the one-click deploy faci
 
 ### Scope
 
-This sprint emphasized **packaging**—turning the work of the previous cohort into a coherent story (what was built, why it was built, what was learned) and producing concrete next-step proposals (customer discovery campaigns), with goals of a shareable deliverable and a central repository for artifacts and proposals. An initial kickoff meeting generated the following action items, which the team distributed amongst eachother, prioritized, and executed over the course of the sprint:
+This sprint emphasized **packaging**—turning the work of the previous cohort into a coherent story (what was built, why it was built, what was learned) and producing concrete next-step proposals (customer discovery campaigns), with goals of a shareable deliverable and a central repository for artifacts and proposals. An initial kickoff meeting generated the following action items, which the team distributed amongst each other, prioritized, and executed over the course of the sprint:
 
 - Collect and analyze feedback from the hackathon to inform product improvements and identify opportunities.
 - Conduct market research on existing facilitator solutions, including pricing models, usage metrics, and feature sets.
@@ -87,9 +87,9 @@ We met again on Monday, January 19th to check in and discuss next steps. The dis
 
 We briefly met again on Wednesday, January 21st and shared our progress with Dekan. We discussed the possibility of our work being viewed as a "service" rather than a "product". We also discussed goals for the end of the month and what each of us might present for the next demo day. We planned to reconvene the following week and continue working asynchronously in the meantime.
 
-Our final meeting for the sprint was on Monday, January 26th. We continued our previous discussion on our work being viewed as a "service" rather than a "product" alongside how we should present our work to Raid Guild members and the importance of collecting feedback. We discussed the possibility of presenting our work as a "case study" and producing a summarizing document that could be presented as a consultant-styled deliverable. We also discussed demo day as the most appropriate first opportunity to share our work with Raid Guild members and how we may need to consider scheduling a separate followup call if there is a low turnout.
+Our final meeting for the sprint was on Monday, January 26th. We continued our previous discussion on our work being viewed as a "service" rather than a "product" alongside how we should present our work to Raid Guild members and the importance of collecting feedback. We discussed the possibility of presenting our work as a "case study" and producing a summarizing document that could be presented as a consultant-styled deliverable. We also discussed demo day as the most appropriate first opportunity to share our work with Raid Guild members and how we may need to consider scheduling a separate follow-up call if there is a low turnout.
 
-In the final week, Patrick focused on refining campaign briefs and writing a proposal for the customer discovery campaign(s), Rome met with our first potential client that reached out to her on LinkedIn and then met with another Raid Guild community member to discuss business development, and I (Ryan) focused on the final push to consolidate and complete the artifacts and to produce a document that summarizes the work we completed for the sprint (this document).
+In the final week, Patrick focused on refining campaign briefs and writing a proposal for the customer discovery campaign(s), Rome met with our first potential client that reached out to her on LinkedIn and then met with another Raid Guild community member to discuss business development, and I (Ryan) focused on the final push to finalize and consolidate the artifacts and to produce a document that summarizes the work we completed for the sprint (this document).
 
 ## Key Sprint Outcomes
 
