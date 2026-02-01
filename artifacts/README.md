@@ -43,3 +43,8 @@ Use **[TEMPLATE](./TEMPLATE.md)** as the starting point for new research artifac
 7. **[ARTIFACT_07](./ARTIFACT_07.md)** - Privacy-Preserving x402 Facilitator
 
    This document assesses the technical requirements and viability of developing a privacy-preserving x402 facilitator, comparing EVM-native privacy improvements with more advanced integrations using privacy layers for shielded payments.
+
+8. **[ARTIFACT_08](./ARTIFACT_08.md)** - x402 Product Sprint Deliverable
+
+   This document provides a summary of the x402 Product Sprint presented as a deliverable: sprint narrative, evidence base, positioning options, proposed customer discovery campaigns, and recommended next steps.
+
