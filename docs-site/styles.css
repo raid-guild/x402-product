@@ -1,0 +1,343 @@
+@font-face {
+  font-family: 'Mazius Display';
+  src:
+    url('/fonts/MAZIUSREVIEW20.09-Regular.woff') format('woff'),
+    url('/fonts/MAZIUSREVIEW20.09-Regular.otf') format('opentype'),
+    url('/fonts/MaziusDisplay-Bold.otf') format('opentype'),
+    url('/fonts/MaziusDisplay-ExtraItalicBold.otf') format('opentype'),
+    url('/fonts/MaziusDisplay-Extraitalic.otf') format('opentype');
+  font-display: swap;
+}
+
+:root {
+  --rg-moloch-500: #bd482d;
+  --rg-moloch-700: #5c2316;
+  --rg-scroll-100: #f9f7e7;
+  --rg-neutral-800: #221d1c;
+  color-scheme: light;
+}
+
+html {
+  background-color: var(--rg-scroll-100);
+  --x-default-font-family: var(--font-eb-garamond), ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  font-family: var(--font-eb-garamond), 'Times New Roman', serif;
+  color: var(--rg-neutral-800);
+  background: radial-gradient(circle at 20% 20%, rgba(255, 214, 194, 0.35), transparent 25%),
+    radial-gradient(circle at 80% 0%, rgba(221, 197, 148, 0.28), transparent 30%),
+    var(--rg-scroll-100);
+  font-variant: normal;
+  font-variant-caps: normal;
+  font-feature-settings: 'smcp' 0, 'c2sc' 0, 'pcap' 0, 'c2pc' 0;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  background: radial-gradient(circle at 20% 20%, rgba(189, 72, 45, 0.18), transparent 25%),
+    radial-gradient(circle at 80% 0%, rgba(92, 35, 22, 0.35), transparent 30%),
+    #0d0d0d;
+  color: #f9f7e7;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: 'Mazius Display', 'EB Garamond', serif;
+  letter-spacing: -0.02em;
+}
+
+a {
+  color: var(--rg-moloch-500);
+}
+
+a:hover {
+  color: var(--rg-moloch-700);
+}
+
+.rg-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Mazius Display', serif;
+  color: var(--rg-neutral-800);
+}
+
+.dark .rg-logo {
+  color: #f9f7e7;
+}
+
+.rg-logo__glyph {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  object-fit: contain;
+}
+
+.rg-logo__wordmark {
+  letter-spacing: -0.015em;
+}
+
+.dark .rg-logo__wordmark {
+  color: #f9f7e7 !important;
+}
+
+
+
+body strong,
+body b {
+  font-weight: inherit;
+}
+
+.rg-inline-icon {
+  display: inline-block;
+  width: 1.25em;
+  height: 1.25em;
+  vertical-align: -0.2em;
+  margin-right: 0.35em;
+  color: var(--rg-neutral-800);
+}
+
+.dark .rg-inline-icon {
+  color: #f9f7e7;
+  filter: invert(1);
+}
+
+
+code,
+pre {
+  font-family: 'Ubuntu Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    'Liberation Mono', 'Courier New', monospace;
+}
+
+.rg-hero {
+  position: relative;
+  margin: 1.5rem 0 2.25rem;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 15px 55px rgba(0, 0, 0, 0.18);
+}
+
+.rg-hero img {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  display: block;
+  filter: saturate(1.05);
+}
+
+@media (min-width: 960px) {
+  .rg-hero img {
+    height: 320px;
+  }
+}
+
+.rg-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(13, 13, 13, 0.05), rgba(13, 13, 13, 0.25));
+  mix-blend-mode: multiply;
+}
+
+.dark .rg-hero::after {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.45));
+}
+
+.channels {
+  border: 1.2px solid var(--rg-moloch-500);
+  border-radius: 5px;
+  padding: 0.1rem 0.3rem;
+  font-style: italic;
+}
+
+.channels a {
+  color: inherit;
+}
+
+.role-label {
+  padding: 0.2rem 0.5rem;
+  border-radius: 5px;
+  font-weight: 600;
+}
+
+.apprentice {
+  color: brown;
+}
+
+.apprentice-bg {
+  background-color: brown;
+}
+
+.archer {
+  color: rgb(209, 30, 170);
+}
+
+.archer-bg {
+  background-color: rgb(209, 30, 170);
+}
+
+.druid {
+  color: rgb(201, 164, 164);
+}
+
+.druid-bg {
+  color: black;
+  background-color: rgb(201, 164, 164);
+}
+
+.paladin {
+  color: green;
+}
+
+.paladin-bg {
+  background-color: green;
+}
+
+.ranger {
+  color: #888888;
+}
+
+.ranger-bg {
+  background-color: #888888;
+}
+
+.warrior {
+  color: #d63447;
+}
+
+.warrior-bg {
+  background-color: #d63447;
+}
+
+.wizard {
+  color: #035aa6;
+}
+
+.wizard-bg {
+  background-color: #035aa6;
+}
+
+.angry-dwarf {
+  color: #fcbf1e;
+}
+
+.angry-dwarf-bg {
+  color: black;
+  background-color: #fcbf1e;
+}
+
+.cleric {
+  color: #588da8;
+}
+
+.cleric-bg {
+  background-color: #588da8;
+}
+
+.hunter {
+  color: #ff5733;
+}
+
+.hunter-bg {
+  background-color: #ff5733;
+}
+
+.monk {
+  color: #1eb2a6;
+}
+
+.monk-bg {
+  background-color: #1eb2a6;
+}
+
+.mystic-alchemist {
+  color: #e9f58f;
+}
+
+.mystic-alchemist-bg {
+  color: black;
+  background-color: #e9f58f;
+}
+
+.rogue {
+  color: #a6b1e1;
+}
+
+.rogue-bg {
+  color: black;
+  background-color: #a6b1e1;
+}
+
+.scribe {
+  color: #9dc6a7;
+}
+
+.scribe-bg {
+  color: black;
+  background-color: #9dc6a7;
+}
+
+.tavern-keeper {
+  color: #05dfd7;
+}
+
+.tavern-keeper-bg {
+  color: black;
+  background-color: #05dfd7;
+}
+
+.healer {
+  color: #ff9595;
+}
+
+.healer-bg {
+  color: black;
+  background-color: #ff9595;
+}
+
+.necromancer {
+  color: #000000;
+}
+
+.necromancer-bg {
+  color: white;
+  background-color: #000000;
+}
+
+.bard {
+  color: #000000;
+}
+
+.bard-bg {
+  color: white;
+  background-color: #000000;
+}
+
+figure {
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  margin-left: 0;
+  margin-right: 0;
+  margin-top: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+figcaption {
+  color: rgba(34, 29, 28, 0.72);
+  line-height: 1.2;
+  font-size: 0.875em;
+}
+
+.dark figcaption {
+  color: rgba(249, 247, 231, 0.75);
+}

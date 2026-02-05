@@ -1,0 +1,32 @@
+{
+  "index": {
+    "title": "artifacts"
+  },
+  "ARTIFACT_01": {
+    "title": "x402 Hackathon Participation"
+  },
+  "ARTIFACT_02": {
+    "title": "x402 Facilitator Competitor Analysis"
+  },
+  "ARTIFACT_03": {
+    "title": "Cost Structure & Rate Limiting Analysis"
+  },
+  "ARTIFACT_04": {
+    "title": "White-Label Product Feasibility"
+  },
+  "ARTIFACT_05": {
+    "title": "Infrastructure Cost Analysis"
+  },
+  "ARTIFACT_06": {
+    "title": "Facilitator Deployment Strategy"
+  },
+  "ARTIFACT_07": {
+    "title": "Privacy-Preserving x402 Facilitator"
+  },
+  "ARTIFACT_08": {
+    "title": "x402 Product Sprint Deliverable"
+  },
+  "TEMPLATE": {
+    "title": "Artifact Title"
+  }
+}
